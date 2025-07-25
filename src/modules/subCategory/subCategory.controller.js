@@ -1,3 +1,4 @@
+// Controls requests and responses
 /** @type {import('mongoose').Model} */
 const SubCategory = require('./subCategory.model');
 const ApiError = require('../../shared/errors/ApiError');

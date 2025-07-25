@@ -1,3 +1,4 @@
+// Controls requests and responses
 // /** @type {import('mongoose').Model} */
 // const User = require('../models/userModel');
 // const ApiError = require('../../shared/errors/ApiError');

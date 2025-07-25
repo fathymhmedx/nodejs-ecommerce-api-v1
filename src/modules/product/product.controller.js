@@ -1,3 +1,4 @@
+// Controls requests and responses
 /** @type {import('mongoose').Model} */
 const Product = require('./product.model');
 const ApiError = require('../../shared/errors/ApiError');
