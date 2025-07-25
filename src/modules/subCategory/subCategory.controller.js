@@ -1,9 +1,9 @@
 /** @type {import('mongoose').Model} */
-const SubCategory = require('../models/subCategoryModel');
-const asyncHandler = require('express-async-handler');
+const SubCategory = require('./subCategory.model');
+const ApiError = require('../../shared/errors/ApiError');
+const { getPagination } = require('../../shared/utils/features/apiFeatures');
 const slugify = require('slugify');
-const ApiError = require('../utils/errors/ApiError');
-const { getPagination } = require('../utils/apiFeatures');
+const asyncHandler = require('express-async-handler');
 
 exports.setCategoryIdToBody = (req, res, next) => {
     if (!req.body.category) req.body.category = req.params.categoryId;

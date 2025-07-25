@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { createProduct, getProducts, getProduct, updateProduct, deleteProduct } = require('../controllers/productController');
-const { createProductValidator, getProductValidator, updateProductValidator, deleteProductValidator } = require('../validators/productValidators')
+const { createProduct, getProducts, getProduct, updateProduct, deleteProduct } = require('./product.controller');
+const { createProductValidator, getProductValidator, updateProductValidator, deleteProductValidator } = require('./product.validators')
 /**
  * @route GET, POST /api/v1/products
  * @access private

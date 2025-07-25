@@ -1,9 +1,9 @@
 /** @type {import('mongoose').Model} */
-const Category = require('../models/categoryModel');
-const ApiError = require('../utils/errors/ApiError');
-const asyncHandler = require('express-async-handler');
+const Category = require('./category.model');
+const ApiError = require('../../shared/errors/ApiError');
+const { getPagination } = require('../../shared/utils/features/apiFeatures');
 const slugify = require('slugify');
-const { getPagination } = require('../utils/apiFeatures');
+const asyncHandler = require('express-async-handler');
 /**
  * @desc Create new category
  * @route POST /api/v1/categories

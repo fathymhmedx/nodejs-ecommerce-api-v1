@@ -1,7 +1,7 @@
 const { body, param } = require('express-validator')
 const { validateRequest } = require('../../shared/middlewares/validatorMiddleware');
-const Category = require('../models/categoryModel');
-const SubCategory = require('../models/subCategoryModel');
+const Category = require('../category/category.model');
+const SubCategory = require('../subCategory/subCategory.model');
 const validatePriceDiscount = (value, { req }) => {
     if (value >= req.body.price) {
         throw new Error('priceAfterDiscount must be lower than price');

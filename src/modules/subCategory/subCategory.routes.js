@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router({ mergeParams: true });
-const { createSubCategory, setCategoryIdToBody, getSubCategories, getSubCategory, updateSubCategory, deleteSubCategory } = require('../controllers/subCategoryController');
-const { createSubCategoryValidator, getSubCategoryValidator, updateSubCategoryValidator, deleteSubCategoryValidator } = require('../validators/subCategoryValidator');
+const { createSubCategory, setCategoryIdToBody, getSubCategories, getSubCategory, updateSubCategory, deleteSubCategory } = require('./subCategory.controller');
+const { createSubCategoryValidator, getSubCategoryValidator, updateSubCategoryValidator, deleteSubCategoryValidator } = require('./subCategory.validators');
 
 /**
  * @route   GET /api/v1/subcategories

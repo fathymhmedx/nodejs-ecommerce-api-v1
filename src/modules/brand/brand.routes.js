@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { createBrand, getBrands, getBrand, updateBrand, deleteBrand } = require('../controllers/brandController');
-const { createBrandValidator, getBrandValidator, updateBrandValidator, deleteBrandValidator } = require('../validators/brandValidators')
+const { createBrand, getBrands, getBrand, updateBrand, deleteBrand } = require('./brand.controller');
+const { createBrandValidator, getBrandValidator, updateBrandValidator, deleteBrandValidator } = require('./brand.validators')
 router
     .route('/')
     .post(createBrandValidator, createBrand)

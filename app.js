@@ -1,29 +1,35 @@
 const express = require('express');
-const morgan = require('morgan');
+const cors = require('cors');
+const helmet = require('helmet');
+// const rateLimit = require('express-rate-limit');
 const dotenv = require('dotenv');
-dotenv.config({ path: "config.env" });
-const { notFoundHandler, globalErrorHandler } = require('./middlewares/errorMiddleware');
-// Routers
-const categoryRouter = require('./routes/categoryRoutes');
-const subCategoryRouter = require('./routes/subCategoryRoute');
-const brandRouter = require('./routes/brandRoutes.js');
-const productRouter = require('./routes/productRoute.js');
 
+// 1. Load environment variables
+dotenv.config({ path: "./config.env" });
+
+// 2. App initialization
 const app = express();
 
-// Middlewares
+// 3. Global middlewares
 app.use(express.json())
-if (process.env.NODE_ENV === "development") {
-    app.use(morgan('dev'))
-    console.log(`Mode: ${process.env.NODE_ENV}`);
-}
+app.use(helmet());
+app.use(cors({
+    origin: "*",
+    // Allow all origins (change to specific domain in production, like: origin: process.env.CLIENT_URL)
+    credentials: true,
+}));
 
-// Routes
-app.use('/api/v1/categories', categoryRouter);
-app.use('/api/v1/subcategories', subCategoryRouter);
-app.use('/api/v1/brands', brandRouter);
-app.use('/api/v1/products', productRouter) 
+// 4. Logger
+const { initLogger } = require('./src/shared/config/logger.js')
+initLogger(app);
 
+// 5. Mount routes
+const routes = require('./routes');
+app.use('/api/v1/', routes);
+
+// 6. Global Error Handling
+const { notFoundHandler, globalErrorHandler } = require('./src/shared/middlewares/errorMiddleware.js');
 app.use(notFoundHandler)
 app.use(globalErrorHandler);
+
 module.exports = app;

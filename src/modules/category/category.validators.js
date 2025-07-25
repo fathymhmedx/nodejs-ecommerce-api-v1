@@ -1,5 +1,5 @@
 const { param, body } = require('express-validator');
-const { validateRequest } = require('../middlewares/validatorMiddleware');
+const { validateRequest } = require('../../shared/middlewares/validatorMiddleware');
 
 exports.createCategoryValidator = [
     body('name')

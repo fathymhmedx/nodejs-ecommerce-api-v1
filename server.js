@@ -6,9 +6,9 @@ process.on('uncaughtException', (err) => {
 
 // Load environment variables from the config.env file
 const dotenv = require('dotenv');
-dotenv.config({ path: 'config.env' })
+dotenv.config({ path: './config.env' })
 
-const connectDB = require('./config/database');
+const connectDB = require('./src/shared/config/database');
 // Import the Express app (main: app.js)
 const app = require('./app');
 

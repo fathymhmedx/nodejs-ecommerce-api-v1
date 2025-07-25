@@ -1,9 +1,9 @@
 /** @type {import('mongoose').Model} */
-const Product = require('../models/productModel');
-const ApiError = require('../utils/errors/ApiError');
-const asyncHandler = require('express-async-handler');
+const Product = require('./product.model');
+const ApiError = require('../../shared/errors/ApiError');
+const { getPagination } = require('../../shared/utils/features/apiFeatures');
 const slugify = require('slugify');
-const { getPagination } = require('../utils/apiFeatures');
+const asyncHandler = require('express-async-handler');
 
 /**
  * @route   POST /api/v1/products

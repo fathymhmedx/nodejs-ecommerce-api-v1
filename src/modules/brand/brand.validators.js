@@ -1,5 +1,5 @@
 const { body, param } = require('express-validator');
-const { validateRequest } = require('../middlewares/validatorMiddleware');
+const { validateRequest } = require('../../shared/middlewares/validatorMiddleware');
 
 exports.createBrandValidator = [
     body('name')
