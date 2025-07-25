@@ -24,7 +24,7 @@ const { initLogger } = require('./src/shared/config/logger.js')
 initLogger(app);
 
 // 5. Mount routes
-const routes = require('./routes');
+const routes = require('./src/routes');
 app.use('/api/v1/', routes);
 
 // 6. Global Error Handling
