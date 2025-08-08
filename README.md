@@ -146,5 +146,5 @@ config.env
 
 ## 👨‍💻 Author
 
-Developed by [Fathy Mohamed](fathymhmed11@gmail.com)
+Developed by [Fathy Mohamed](mailto:fathymhmed11@gmail.com)
 
