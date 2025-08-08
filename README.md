@@ -7,7 +7,8 @@ Ecommerce RESTful API built with **Node.js**, **Express.js**, and **MongoDB** fo
 ---
 
 ## 📁 Project Structure
-
+    Monolithic modular Architecture
+    
 ```
 ├── modules/
 │   ├── auth/           # Auth & JWT
