@@ -66,38 +66,70 @@ exports.createProduct = asyncHandler(async (req, res) => {
  */
 exports.getProducts = asyncHandler(async (req, res) => {
     // 1) Filtering 
-    // BUILD QUERY
     const queryObj = { ...req.query };
-    const excludedFields = ['page', 'sort', 'limit', 'fields'];
-    excludedFields.forEach( el => delete queryObj[el]);
+    const excludedFields = ['page', 'sort', 'limit', 'fields', 'keyword'];
+    excludedFields.forEach(el => delete queryObj[el]);
 
-    // 2) Advanced Filtering (price[gte] => price: { $gte: value }) 
-
+    // 2) Advanced Filtering (Numeric parsing, Regex search)
     let mongoQuery = {};
 
     for (const key in queryObj) {
-        const value = isNaN(queryObj[key]) ? queryObj[key] : Number(queryObj[key]);
+        // Multi-value filtering
+        if (typeof queryObj[key] === 'string' && queryObj[key].includes(',')) {
+            mongoQuery[key] = { $in: queryObj[key].split(',') };
+            continue;
+        }
 
+        const value = isNaN(queryObj[key]) ? queryObj[key] : Number(queryObj[key]);
         const match = key.match(/^(.+)\[(gte|gt|lte|lt)\]$/);
+
         if (match) {
             const [, field, operator] = match;
             if (!mongoQuery[field]) mongoQuery[field] = {};
             mongoQuery[field][`$${operator}`] = value;
         } else {
             if (typeof value === 'string') {
-                mongoQuery[key] = { $regex: value, $options: 'i' }; 
+                mongoQuery[key] = { $regex: value, $options: 'i' };
             } else {
                 mongoQuery[key] = value;
             }
         }
-
     }
-    // 2) Pagination
+
+    // 3) Sorting
+    let sortBy = "-createdAt"; // Default sort
+    if (req.query.sort) {
+        sortBy = req.query.sort.split(',').join(' ');
+    }
+
+
+    // 4) Field Limiting
+    let selectFields = '-__v';
+    if (req.query.fields) {
+        selectFields = req.query.fields.split(',').join(' ');
+    }
+
+    // 5) Search
+    if (req.query.keyword) {
+        mongoQuery.$or = [
+            { title: { $regex: req.query.keyword, $options: 'i' } },
+            { description: { $regex: req.query.keyword, $options: 'i' } }
+        ];
+    }
+    console.log(mongoQuery);
+    // 5) Pagination
     const { page, limit, skip } = getPagination(req.query);
+
+    // 6) Execute queries in parallel
     const [total, products] = await Promise.all([
         Product.countDocuments(mongoQuery),
-        Product.find(mongoQuery).skip(skip).limit(limit).lean()
-        // .populate({ path: 'category', select: 'name -_id' })
+        Product.find(mongoQuery)
+            .select(selectFields)
+            .sort(sortBy)
+            .skip(skip)
+            .limit(limit)
+            .lean()
+            .populate({ path: 'category', select: 'name -_id' })
     ])
 
     res.status(200).json({
@@ -111,7 +143,7 @@ exports.getProducts = asyncHandler(async (req, res) => {
             products
         }
     })
-})
+});
 
 /**
  * @route   GET /api/v1/products/:id

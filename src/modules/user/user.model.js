@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
 const userSchema = mongoose.Schema({
     name: {
@@ -28,10 +29,23 @@ const userSchema = mongoose.Schema({
         type: String,
         enum: ['user', 'admin'],
         default: 'user'
-    }
+    },
+    active: {
+        type: Boolean,
+        default: true,
+    },
 }, {
     timestamps: true
 })
+
+// pre-save hook
+userSchema.pre('save', async function (next) {
+    if (!this.isModified('password')) return next()
+    //hashing user password
+    const salt = await bcrypt.genSalt(12);
+    this.password = await bcrypt.hash(this.password, salt);
+    next()
+});
 
 const User = mongoose.model('User', userSchema);
 module.exports = User;

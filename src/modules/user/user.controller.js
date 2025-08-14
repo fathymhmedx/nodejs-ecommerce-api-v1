@@ -1,6 +1,6 @@
-// Controls requests and responses
+// // Controls requests and responses
 // /** @type {import('mongoose').Model} */
-// const User = require('../models/userModel');
+// const User = require('../user/user.model');
 // const ApiError = require('../../shared/errors/ApiError');
 // const { getPagination } = require('../../shared/utils/features/apiFeatures'); 
 // const asyncHandler = require('express-async-handler');
