@@ -76,13 +76,21 @@ class ApiFeatures {
         return this;
     }
 
-    paginate() {
+    paginate(totalDocs) {
         const page = Math.max(1, parseInt(this.queryString.page) || 1);
         const limit = Math.max(1, parseInt(this.queryString.limit) || 5);
         const skip = (page - 1) * limit;
+        const totalPages = Math.ceil(totalDocs / limit);
 
         this.mongooseQuery = this.mongooseQuery.skip(skip).limit(limit);
-        this.paginationResult = { page, limit, skip };
+
+        this.paginationResult = {
+            totalPages,
+            currentPage: page,
+            limit,
+            prevPage: page > 1 ? page - 1 : null,
+            nextPage: page < totalPages ? page + 1 : null
+        };
         return this;
     }
 

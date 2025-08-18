@@ -65,33 +65,38 @@ exports.createProduct = asyncHandler(async (req, res) => {
  * @access  public
  */
 exports.getProducts = asyncHandler(async (req, res) => {
+    const baseQuery = Product.find();
     // Apply API Features (filtering, searching, sorting, field limiting, pagination)
-    const features = new ApiFeatures(Product.find(), req.query)
+    const features = new ApiFeatures(baseQuery, req.query) 
         .filter()
         .search()
         .sort()
         .limitFields()
-        .paginate()
         .populate('category', 'name -_id');
 
-    // Execute queries in parallel
+    // execute queries in parallel
     const [total, products] = await Promise.all([
         Product.countDocuments(features.mongooseQuery._conditions),
         features.mongooseQuery.lean()
     ])
 
+    // apply pagination after knowing total
+    features.paginate(total)
+
+    // Response
     res.status(200).json({
         status: 'success',
-        currentPage: features.paginationResult.page,
-        limit: features.paginationResult.limit,
-        results: products.length,
-        totalResults: total,
-        totalPages: Math.ceil(total / features.paginationResult.limit),
+        meta: {
+            ...features.paginationResult,
+            results: products.length,
+            totalResults: total,
+        },
         data: {
             products
         }
     })
 });
+
 
 /**
  * @route   GET /api/v1/products/:id
