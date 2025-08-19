@@ -2,7 +2,7 @@
 /** @type {import('mongoose').Model} */
 const Brand = require('./brand.model');
 const ApiError = require('../../shared/errors/ApiError');
-const { getPagination } = require('../../shared/utils/features/apiFeatures');
+const ApiFeatures = require('../../shared/utils/features/apiFeatures');
 const slugify = require('slugify');
 const asyncHandler = require('express-async-handler');
 
@@ -28,24 +28,36 @@ exports.createBrand = asyncHandler(async (req, res) => {
  * @access  public
  */
 exports.getBrands = asyncHandler(async (req, res, next) => {
-    const { page, skip, limit } = getPagination(req.query);
-    const [total, brands] = await Promise.all([
-        Brand.countDocuments(),
-        Brand.find().skip(skip).limit(limit).lean()
+    const baseQuery = Brand.find();
+
+    // Apply API Features (filtering, searching, sorting, field limiting, pagination)
+    const features = new ApiFeatures(baseQuery, req.query)
+        .filter()
+        .search()
+        .sort()
+        .limitFields();
+
+    // 1) Get total count first
+    const total = await Brand.countDocuments(features.mongooseQuery._conditions);
+
+    // 2) Apply pagination after knowing total
+    features.paginate(total);
+
+    // 3) Run query (after pagination) in parallel with nothing else (but still scalable)
+    const [brands] = await Promise.all([
+        features.mongooseQuery.lean()
     ]);
 
+    // Response
     res.status(200).json({
         status: 'success',
-        currentPage: page,
-        limit: limit,
-        results: brands.length,
-        totalResults: total,
-        totalPages: Math.ceil(total / limit),
+        meta: {
+            ...features.paginationResult,
+        },
         data: {
             brands
         }
     })
-
 });
 
 /**

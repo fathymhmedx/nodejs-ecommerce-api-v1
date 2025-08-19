@@ -67,29 +67,29 @@ exports.createProduct = asyncHandler(async (req, res) => {
 exports.getProducts = asyncHandler(async (req, res) => {
     const baseQuery = Product.find();
     // Apply API Features (filtering, searching, sorting, field limiting, pagination)
-    const features = new ApiFeatures(baseQuery, req.query) 
+    const features = new ApiFeatures(baseQuery, req.query)
         .filter()
         .search()
         .sort()
         .limitFields()
         .populate('category', 'name -_id');
 
-    // execute queries in parallel
-    const [total, products] = await Promise.all([
-        Product.countDocuments(features.mongooseQuery._conditions),
-        features.mongooseQuery.lean()
-    ])
+    // 1) Get total count first
+    const total = await Product.countDocuments(features.mongooseQuery._conditions);
 
-    // apply pagination after knowing total
-    features.paginate(total)
+    // 2) Apply pagination after knowing total
+    features.paginate(total);
+
+    // 3) Run query (after pagination) in parallel with nothing else (but still scalable)
+    const [products] = await Promise.all([
+        features.mongooseQuery.lean()
+    ]);
 
     // Response
     res.status(200).json({
         status: 'success',
         meta: {
             ...features.paginationResult,
-            results: products.length,
-            totalResults: total,
         },
         data: {
             products

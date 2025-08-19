@@ -67,7 +67,8 @@ class ApiFeatures {
             const keywordQuery = {
                 $or: [
                     { title: { $regex: this.queryString.keyword, $options: 'i' } },
-                    { description: { $regex: this.queryString.keyword, $options: 'i' } }
+                    { description: { $regex: this.queryString.keyword, $options: 'i' } },
+                    { name: { $regex: this.queryString.keyword, $options: 'i' } },
                 ]
             };
 
@@ -85,6 +86,8 @@ class ApiFeatures {
         this.mongooseQuery = this.mongooseQuery.skip(skip).limit(limit);
 
         this.paginationResult = {
+            totalResults: totalDocs,
+            results: Math.min(limit, totalDocs - skip),
             totalPages,
             currentPage: page,
             limit,
