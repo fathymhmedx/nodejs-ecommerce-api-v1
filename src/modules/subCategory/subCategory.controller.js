@@ -2,7 +2,7 @@
 /** @type {import('mongoose').Model} */
 const SubCategory = require('./subCategory.model');
 const ApiError = require('../../shared/errors/ApiError');
-const { getPagination } = require('../../shared/utils/features/apiFeatures');
+const ApiFeatures = require('../../shared/utils/features/apiFeatures');
 const slugify = require('slugify');
 const asyncHandler = require('express-async-handler');
 
@@ -33,27 +33,31 @@ exports.createSubCategory = asyncHandler(async (req, res) => {
  * @access public
  */
 exports.getSubCategories = asyncHandler(async (req, res) => {
+    const baseQuery = SubCategory.find();
 
-    // 1. Pagination setup
-    const { page, limit, skip } = getPagination(req.query);
+    const features = new ApiFeatures(baseQuery, req.query)
+        .filter()
+        .search()
+        .sort()
+        .limitFields();
 
-    const categoryId = req.params.categoryId;
-    const filterObj = categoryId ? { category: categoryId } : {};
+    // 1) Get total count first
+    const total = await SubCategory.countDocuments(features.mongooseQuery._conditions);
 
-    // 2. Get total and paginated data
-    const [total, subCategories] = await Promise.all([
-        SubCategory.countDocuments(filterObj),
-        SubCategory.find(filterObj).skip(skip).limit(limit).lean()
-    ]);
-    // 3. Response 
+    // 2) Apply pagination after knowing total
+    features.paginate(total);
+
+    // 3) Excute query (after pagination) in parallel with nothing else (but still scalable)
+    const [subCategories] = await Promise.all([
+        features.mongooseQuery.lean(),
+    ])
+
+    // Response 
     res.status(200).json({
         status: 'success',
-        currentPage: page,
-        limit,
-        results: subCategories.length,
-        totalResults: total,
-        totalPages: Math.ceil(total / limit),
-
+        meta: {
+            ...features.paginationResult,
+        },
         data: {
             subCategories
         }

@@ -2,7 +2,7 @@
 /** @type {import('mongoose').Model} */
 const Category = require('./category.model');
 const ApiError = require('../../shared/errors/ApiError');
-const { getPagination } = require('../../shared/utils/features/apiFeatures');
+const ApiFeatures = require('../../shared/utils/features/apiFeatures');
 const slugify = require('slugify');
 const asyncHandler = require('express-async-handler');
 /**
@@ -29,28 +29,31 @@ exports.createCategory = asyncHandler(async (req, res) => {
  * @access public
  */
 exports.getCategories = asyncHandler(async (req, res) => {
-    // 1. Pagination setup
-    const { page, limit, skip } = getPagination(req.query);
+    const baseQuery = Category.find();
 
-    // 2. Get total and paginated data
+    const features = new ApiFeatures(baseQuery, req.query)
+        .filter()
+        .search()
+        .sort()
+        .limitFields()
 
-    // This method is slower than the other method.
-    // const categories = await Category.find().limit(limit).skip(skip);
-    // const total = await Category.countDocuments();
+    // 1) Get total count first
+    const total = await Category.countDocuments(features.mongooseQuery._conditions);
 
-    const [total, categories] = await Promise.all([
-        Category.countDocuments(),
-        Category.find().skip(skip).limit(limit).lean()
-    ]);
+    // 2) Apply pagination after knowing total
+    features.paginate(total);
 
-    // 3. Response
+    // 3) Excute query (after pagination) in parallel with nothing else (but still scalable)
+    const [categories] = await Promise.all([
+        features.mongooseQuery.lean(),
+    ])
+
+    // Response
     res.status(200).json({
         status: "success",
-        currentPage: page,
-        limit: limit,
-        results: categories.length,
-        totalResults: total,
-        totalPages: Math.ceil(total / limit),
+        meta: {
+            ...features.paginationResult,
+        },
         data: {
             categories
         }
@@ -65,7 +68,7 @@ exports.getCategories = asyncHandler(async (req, res) => {
 exports.getCategory = asyncHandler(async (req, res, next) => {
     const { id } = req.params;
     const category = await Category.findById(id).lean();
-    
+
     if (!category) {
         return next(new ApiError(`No category found for id: ${id}`, 404));
     }
