@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router({ mergeParams: true });
-const { createSubCategory, setCategoryIdToBody, getSubCategories, getSubCategory, updateSubCategory, deleteSubCategory } = require('./subCategory.controller');
+const { createSubCategory, setCategoryIdToBody, createFilterObj, getSubCategories, getSubCategory, updateSubCategory, deleteSubCategory } = require('./subCategory.controller');
 const { createSubCategoryValidator, getSubCategoryValidator, updateSubCategoryValidator, deleteSubCategoryValidator } = require('./subCategory.validators');
 
 /**
@@ -19,7 +19,7 @@ router
         createSubCategoryValidator,
         createSubCategory
     )
-    .get(getSubCategories)
+    .get(createFilterObj, getSubCategories)
 
 /**
  * @route GET, PUT, DELETE /api/v1/subcategories/:id

@@ -1,4 +1,3 @@
-// utils/slugifyPlugin.js
 const slugify = require('slugify');
 
 function slugifyPlugin(schema, options = {}) {
@@ -6,7 +5,7 @@ function slugifyPlugin(schema, options = {}) {
     const slugField = options.slugField || 'slug';
 
     schema.pre('save', function (next) {
-        if (this.isModified(field)) {
+        if (this.isModified(sourceField)) {
             this[slugField] = slugify(this[sourceField], { lower: true, strict: true });
         }
         next();
