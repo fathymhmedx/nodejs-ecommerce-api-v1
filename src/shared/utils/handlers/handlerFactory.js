@@ -17,7 +17,7 @@ exports.createOne = (Model) =>
         })
     });
 
-exports.getAll = (Model) =>
+exports.getAll = (Model, populateOptions) =>
     asyncHandler(async (req, res) => {
         let filter = {};
         if (req.filterObj) {
@@ -39,6 +39,10 @@ exports.getAll = (Model) =>
         // 2) Apply pagination after knowing total
         features.paginate(total);
 
+        // If used populate
+        if(populateOptions) {
+            features.populate(populateOptions.path, populateOptions.select)
+        }
         // 3) Run query (after pagination) in parallel with nothing else (but still scalable)
         const [docs] = await Promise.all([
             features.mongooseQuery.lean()

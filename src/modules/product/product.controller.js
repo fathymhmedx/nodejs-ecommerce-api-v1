@@ -16,7 +16,7 @@ exports.createProduct = factory.createOne(Product);
  * @desc    Get all products
  * @access  public
  */
-exports.getProducts = factory.getAll(Product);
+exports.getProducts = factory.getAll(Product, { path: 'category', select: 'name -_id' });
 
 
 /**
