@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const slugifyPlugin = require('../../shared/utils/plugins/slugifyPlugin');
 
 const categorySchema = mongoose.Schema({
     name: {
@@ -21,6 +22,7 @@ const categorySchema = mongoose.Schema({
 });
 
 
+categorySchema.plugin(slugifyPlugin, { sourceField: 'name', slugField: 'slug' });
 
 const Category = mongoose.model("Category", categorySchema);
 module.exports = Category;

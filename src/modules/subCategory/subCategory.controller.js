@@ -3,6 +3,8 @@
 const SubCategory = require('./subCategory.model');
 const ApiError = require('../../shared/errors/ApiError');
 const ApiFeatures = require('../../shared/utils/features/apiFeatures');
+const factory = require('../../shared/utils/handlers/handlerFactory');
+
 const slugify = require('slugify');
 const asyncHandler = require('express-async-handler');
 
@@ -94,42 +96,11 @@ exports.getSubCategory = asyncHandler(async (req, res, next) => {
  * @access private
  */
 
-exports.updateSubCategory = asyncHandler(async (req, res, next) => {
-    const { id } = req.params;
-    const { name, category } = req.body;
-    const subCategory = await SubCategory.findByIdAndUpdate(id, { name, category, slug: slugify(name) }, {
-        new: true,
-        runValidators: true // validation mongoose
-    })
-
-    if (!subCategory) {
-        return next(new ApiError(`No subCategory found for id: ${id}`, 404));
-    }
-
-    res.status(200).json({
-        status: 'success',
-        data: {
-            subCategory
-        }
-    })
-})
+exports.updateSubCategory = factory.updateOne(SubCategory);
 
 /**
  * @desc Delete specific subCategory
  * @route DELETE /api/subcategories/:id
  * @access private
  */
-
-exports.deleteSubCategory = asyncHandler(async (req, res, next) => {
-    const { id } = req.params
-    const subCategory = await SubCategory.findByIdAndDelete(id);
-
-    if (!subCategory) {
-        return next(new ApiError(`No subCategory found for id: ${id}`, 404));
-    }
-
-    res.status(200).json({
-        status: 'success',
-        message: 'SubCategory deleted successfully',
-    });
-});
+exports.deleteSubCategory = factory.deleteOne(SubCategory);

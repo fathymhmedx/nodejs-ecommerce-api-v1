@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const slugifyPlugin = require('../../shared/utils/plugins/slugifyPlugin');
 
 const subCategorySchema = mongoose.Schema({
     name: {
@@ -22,6 +23,8 @@ const subCategorySchema = mongoose.Schema({
     timestamps: true
 })
 
-const SubCategory = mongoose.model('SubCategory', subCategorySchema);
 
+subCategorySchema.plugin(slugifyPlugin, { sourceField: 'name', slugField: 'slug' });
+
+const SubCategory = mongoose.model('SubCategory', subCategorySchema);
 module.exports = SubCategory;

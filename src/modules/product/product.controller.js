@@ -3,6 +3,8 @@
 const Product = require('./product.model');
 const ApiError = require('../../shared/errors/ApiError');
 const ApiFeatures = require('../../shared/utils/features/apiFeatures');
+const factory = require('../../shared/utils/handlers/handlerFactory');
+
 const slugify = require('slugify');
 const asyncHandler = require('express-async-handler');
 
@@ -124,76 +126,11 @@ exports.getProduct = asyncHandler(async (req, res, next) => {
  * @desc    Update specific product
  * @access  private
  */
-exports.updateProduct = asyncHandler(async (req, res, next) => {
-    const { id } = req.params;
-    const {
-        title,
-        description,
-        quantity,
-        sold,
-        price,
-        priceAfterDiscount,
-        colors,
-        images,
-        imageCover,
-        category,
-        subCategories,
-        brand,
-        ratingsAverage,
-        ratingQuantity
-    } = req.body;
-
-    const updateData = {
-        title,
-        description,
-        quantity,
-        sold,
-        price,
-        priceAfterDiscount,
-        colors,
-        images,
-        imageCover,
-        category,
-        subCategories,
-        brand,
-        ratingsAverage,
-        ratingQuantity
-    }
-    if (title) {
-        updateData.slug = slugify(title);
-    }
-    const product = await Product.findByIdAndUpdate(id, updateData, {
-        runValidators: true,
-        new: true
-    })
-
-    if (!product) {
-        return next(new ApiError(`No product found for id: ${id}`, 404));
-    }
-
-    res.status(200).json({
-        status: 'success',
-        data: {
-            product
-        }
-    })
-})
+exports.updateProduct = factory.updateOne(Product);
 
 /**
  * @route   DELETE /api/v1/products/:id
  * @desc    Delete specific product
  * @access  private
  */
-exports.deleteProduct = asyncHandler(async (req, res, next) => {
-    const { id } = req.params;
-    const product = await Product.findByIdAndDelete(id);
-
-    if (!product) {
-        return next(new ApiError(`No Product found for id: ${id}`, 404));
-    }
-
-    res.status(200).json({
-        status: 'success',
-        message: 'Product deleted successfully',
-    })
-})
+exports.deleteProduct = factory.deleteOne(Product);

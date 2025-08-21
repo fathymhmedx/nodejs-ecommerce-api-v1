@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const slugifyPlugin = require('../../shared/utils/plugins/slugifyPlugin');
 
 const userSchema = mongoose.Schema({
     name: {
@@ -46,6 +47,9 @@ userSchema.pre('save', async function (next) {
     this.password = await bcrypt.hash(this.password, salt);
     next()
 });
+
+
+userSchema.plugin(slugifyPlugin, { sourceField: 'name', slugField: 'slug' });
 
 const User = mongoose.model('User', userSchema);
 module.exports = User;

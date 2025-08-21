@@ -3,6 +3,7 @@
 const Category = require('./category.model');
 const ApiError = require('../../shared/errors/ApiError');
 const ApiFeatures = require('../../shared/utils/features/apiFeatures');
+const factory = require('../../shared/utils/handlers/handlerFactory');
 const slugify = require('slugify');
 const asyncHandler = require('express-async-handler');
 /**
@@ -86,40 +87,11 @@ exports.getCategory = asyncHandler(async (req, res, next) => {
  * @route PUT /api/v1/categories/:id
  * @access private
  */
-exports.updateCategory = asyncHandler(async (req, res, next) => {
-    const { id } = req.params;
-    const { name } = req.body;
-    const category = await Category.findByIdAndUpdate(id, { name, slug: slugify(name) }, {
-        new: true,
-        runValidators: true
-    });
-
-    if (!category) {
-        return next(new ApiError(`No category found for id: ${id}`, 404));
-    }
-
-    res.status(200).json({
-        status: "success",
-        data: {
-            category
-        }
-    })
-});
+exports.updateCategory = factory.updateOne(Category);
 
 /**
  * @desc Delete specific category
  * @route DELETE /api/v1/categories/:id
  * @access private
  */
-
-exports.deleteCategory = asyncHandler(async (req, res, next) => {
-    const { id } = req.params;
-    const category = await Category.findByIdAndDelete(id);
-    if (!category) {
-        return next(new ApiError(`No category found for id: ${id}`, 404))
-    }
-    res.status(200).json({
-        status: 'success',
-        message: 'Category deleted successfully',
-    });
-})
+exports.deleteCategory = factory.deleteOne(Category);

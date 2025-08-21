@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const slugifyPlugin = require('../../shared/utils/plugins/slugifyPlugin');
 
 const brandSchema = mongoose.Schema({
     name: {
@@ -15,10 +16,13 @@ const brandSchema = mongoose.Schema({
     },
     image: {
         type: String
-    }
+    },
+
 }, {
     timestamps: true
 })
+
+brandSchema.plugin(slugifyPlugin, { sourceField: 'name', slugField: 'slug' });
 
 const Brand = mongoose.model('Brand', brandSchema);
 module.exports = Brand;

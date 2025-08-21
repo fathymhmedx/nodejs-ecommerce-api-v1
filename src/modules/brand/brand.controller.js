@@ -3,6 +3,7 @@
 const Brand = require('./brand.model');
 const ApiError = require('../../shared/errors/ApiError');
 const ApiFeatures = require('../../shared/utils/features/apiFeatures');
+const factory = require('../../shared/utils/handlers/handlerFactory');
 const slugify = require('slugify');
 const asyncHandler = require('express-async-handler');
 
@@ -87,42 +88,11 @@ exports.getBrand = asyncHandler(async (req, res, next) => {
  * @access  private
  */
 
-exports.updateBrand = asyncHandler(async (req, res, next) => {
-    const { id } = req.params;
-    const { name } = req.body;
-
-    const brand = await Brand.findByIdAndUpdate(id, { name, slug: slugify(name) }, {
-        runValidators: true,
-        new: true
-    });
-
-    if (!brand) {
-        return next(new ApiError(`No brand found for id: ${id}`, 404))
-    }
-
-    res.status(200).json({
-        status: 'success',
-        data: {
-            brand
-        }
-    })
-});
+exports.updateBrand = factory.updateOne(Brand);
 
 /**
  * @route   DELETE /api/v1/brands/:id
  * @desc    Delete a specific brand by ID
  * @access  private
  */
-exports.deleteBrand = asyncHandler(async (req, res, next) => {
-    const { id } = req.params;
-    const brand = await Brand.findByIdAndDelete(id);
-
-    if (!brand) {
-        return next(new ApiError(`No brand found for id: ${id}`, 404));
-    }
-
-    res.status(200).json({
-        status: 'success',
-        message: 'Brand deleted successfully',
-    });
-});
+exports.deleteBrand = factory.deleteOne(Brand);
