@@ -1,6 +1,6 @@
 const slugify = require('slugify');
 
-function slugifyPlugin(schema, options = {}) {
+module.exports = function slugifyPlugin(schema, options = {}) {
     const sourceField = options.sourceField || 'name'; 
     const slugField = options.slugField || 'slug';
 
@@ -20,5 +20,3 @@ function slugifyPlugin(schema, options = {}) {
         next();
     });
 }
-
-module.exports = slugifyPlugin;

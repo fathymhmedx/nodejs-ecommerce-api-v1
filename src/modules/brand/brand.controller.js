@@ -2,7 +2,12 @@
 /** @type {import('mongoose').Model} */
 const Brand = require('./brand.model');
 const factory = require('../../shared/utils/handlers/handlerFactory');
+const { uploadSingleImage, resizeAndSaveImage } = require('../../shared/middlewares/uploadImageMiddleware');
+// Upload single image
+exports.uploadBrandImage = uploadSingleImage('image');
 
+// Iimage processing 
+exports.resizeImage = resizeAndSaveImage('brands', 600, 600);
 /**
  * @route   POST /api/v1/brands
  * @desc    Create new brand

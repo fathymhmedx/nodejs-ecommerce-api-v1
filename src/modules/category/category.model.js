@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const slugifyPlugin = require('../../shared/utils/plugins/slugifyPlugin');
+const imageUrlPlugin = require('../../shared/utils/plugins/imageUrlPlugin');
 
 const categorySchema = mongoose.Schema({
     name: {
@@ -17,11 +18,11 @@ const categorySchema = mongoose.Schema({
     image: {
         type: String
     }
-},{
-    timestamps:true
+}, {
+    timestamps: true
 });
 
-
+categorySchema.plugin(imageUrlPlugin, { folder: 'categories', fields: ['image'] });
 categorySchema.plugin(slugifyPlugin, { sourceField: 'name', slugField: 'slug' });
 
 const Category = mongoose.model("Category", categorySchema);

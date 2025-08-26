@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -12,6 +13,7 @@ const app = express();
 
 // 3. Global middlewares
 app.use(express.json())
+app.use(express.static(path.join(__dirname, './src/uploads')));
 app.use(helmet());
 app.use(cors({
     origin: "*",

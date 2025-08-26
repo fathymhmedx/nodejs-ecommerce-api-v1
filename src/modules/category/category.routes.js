@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const subCategoryRoutes = require('../subCategory/subCategory.routes');
-const { createCategory, getCategories, getCategory, updateCategory, deleteCategory } = require('./category.controller');
+const { uploadCategoryImage, resizeImage, createCategory, getCategories, getCategory, updateCategory, deleteCategory } = require('./category.controller');
 const { getCategoryValidator, createCategoryValidator, updateCategoryValidator, deleteCategoryValidator } = require('./category.validators');
 
 /**
@@ -10,17 +10,22 @@ const { getCategoryValidator, createCategoryValidator, updateCategoryValidator, 
  * 
  * @route POST GET /api/v1/categories/:categoryId/subcategories
  * @desc Create subCategory from categroyId
- */
+*/
 router.use('/:categoryId/subcategories', subCategoryRoutes)
 
 /**
  * @route GET, POST /api/v1/categories
  * @access private
- */
+*/
 router
     .route('/')
     .get(getCategories)
-    .post(createCategoryValidator, createCategory);
+    .post(
+        uploadCategoryImage,
+        resizeImage,
+        createCategoryValidator,
+        createCategory
+    );
 
 /**
  * @route GET, PUT, DELETE /api/v1/categories/:id
@@ -29,7 +34,12 @@ router
 router
     .route('/:id')
     .get(getCategoryValidator, getCategory)
-    .put(updateCategoryValidator, updateCategory)
+    .put(
+        uploadCategoryImage,
+        resizeImage,
+        updateCategoryValidator,
+        updateCategory
+    )
     .delete(deleteCategoryValidator, deleteCategory)
 
 

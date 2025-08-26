@@ -61,7 +61,6 @@ npm install
 Add your environment variables in a file named `config.env` at the root:
 # ============================
 # Environment Configuration
-# ============================
 
 # Set the environment mode: 'development' or 'production'
 NODE_ENV=development
@@ -71,7 +70,6 @@ PORT=8000
 
 # ============================
 #  MongoDB Configuration
-# ============================
 
 # MongoDB connection URI.
 # Replace <DB_USER> and <DB_PASS> with your actual MongoDB Atlas credentials.
@@ -82,14 +80,12 @@ DB_PASS=your_mongodb_password
 
 # ============================
 #  Frontend Configuration
-# ============================
 
 # URL of your frontend client (React, etc.)
 CLIENT_URL=http://localhost:3000
 
 # ============================
 #  JWT Authentication
-# ============================
 
 # Secret key to sign JWT tokens (use a strong random string)
 JWT_SECRET=your_jwt_secret

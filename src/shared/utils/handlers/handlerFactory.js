@@ -45,7 +45,7 @@ exports.getAll = (Model, populateOptions) =>
         }
         // 3) Run query (after pagination) in parallel with nothing else (but still scalable)
         const [docs] = await Promise.all([
-            features.mongooseQuery.lean()
+            features.mongooseQuery,
         ]);
 
         const modelName = pluralize(Model.modelName.toLowerCase());
@@ -64,7 +64,7 @@ exports.getAll = (Model, populateOptions) =>
 exports.getOne = (Model) =>
     asyncHandler(async (req, res, next) => {
         const { id } = req.params;
-        const doc = await Model.findById(id).lean();
+        const doc = await Model.findById(id);
 
         if (!doc) {
             return next(new ApiError(`No ${Model.modelName} found for id: ${id}`, 404));
