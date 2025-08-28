@@ -1,9 +1,16 @@
 // Controls requests and responses
+const asyncHandler = require('express-async-handler');
 /** @type {import('mongoose').Model} */
 const Product = require('./product.model');
 const factory = require('../../shared/utils/handlers/handlerFactory');
+const { uploadFields, resizeProductImages } = require('../../shared/middlewares/uploadImageMiddleware');
+// Upload product images (cover + gallery)
+exports.uploadProductImages = uploadFields([
+    { name: 'imageCover', maxCount: 1 },
+    { name: 'images', maxCount: 5 }
+]);
 
-
+exports.resizeProductImages = resizeProductImages;
 /**
  * @route   POST /api/v1/products
  * @desc    Create new product

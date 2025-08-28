@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { createProduct, getProducts, getProduct, updateProduct, deleteProduct } = require('./product.controller');
+const { uploadProductImages, resizeProductImages, createProduct, getProducts, getProduct, updateProduct, deleteProduct } = require('./product.controller');
 const { createProductValidator, getProductValidator, updateProductValidator, deleteProductValidator } = require('./product.validators')
 /**
  * @route GET, POST /api/v1/products
@@ -8,7 +8,12 @@ const { createProductValidator, getProductValidator, updateProductValidator, del
  */
 router
     .route('/')
-    .post(createProductValidator, createProduct)
+    .post(
+        uploadProductImages,
+        resizeProductImages,
+        createProductValidator,
+        createProduct
+    )
     .get(getProducts)
 
 /**
@@ -18,7 +23,12 @@ router
 router
     .route('/:id')
     .get(getProductValidator, getProduct)
-    .put(updateProductValidator, updateProduct)
+    .put(
+        uploadProductImages,
+        resizeProductImages,
+        updateProductValidator,
+        updateProduct
+    )
     .delete(deleteProductValidator, deleteProduct)
 
 module.exports = router;

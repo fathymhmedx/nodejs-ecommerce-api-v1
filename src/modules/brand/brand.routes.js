@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const { uploadBrandImage, resizeImage, createBrand, getBrands, getBrand, updateBrand, deleteBrand } = require('./brand.controller');
+const { uploadBrandImage, resizeAndSaveSingleImage, createBrand, getBrands, getBrand, updateBrand, deleteBrand } = require('./brand.controller');
 const { createBrandValidator, getBrandValidator, updateBrandValidator, deleteBrandValidator } = require('./brand.validators')
 router
     .route('/')
     .post(
         uploadBrandImage,
-        resizeImage,
+        resizeAndSaveSingleImage,
         createBrandValidator,
         createBrand
     )
@@ -17,7 +17,7 @@ router
     .get(getBrandValidator, getBrand)
     .put(
         uploadBrandImage,
-        resizeImage,
+        resizeAndSaveSingleImage,
         updateBrandValidator,
         updateBrand
     )

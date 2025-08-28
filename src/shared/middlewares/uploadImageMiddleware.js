@@ -14,48 +14,65 @@ const imageFilter = (req, file, cb) => {
 
 const upload = multer({ storage: multer.memoryStorage(), fileFilter: imageFilter });
 
-exports.uploadSingleImage = (fieldName) => upload.single(fieldName)
+exports.uploadSingleImage = (fieldName) => upload.single(fieldName);
 
-// exports.uploadMultipleImage 
+exports.uploadFields = (fields) => upload.fields(fields);
 
-// Resize and save image(s)
-exports.resizeAndSaveImage = (folder, width = 600, height = 600) =>
+exports.resizeAndSaveSingleImage = (folder, fieldName, width, height) =>
     asyncHandler(async (req, res, next) => {
-        if (!req.file && !req.files) return next();
+        if (!req.file) return next();
 
         const uploadDir = path.join(__dirname, `../../uploads/${folder}`);
         await fs.promises.mkdir(uploadDir, { recursive: true });
 
-        // Single file
-        if (req.file) {
-            const fileName = `${folder}-${uuidv4()}-${Date.now()}.webp`;
-            const uploadPath = path.join(uploadDir, fileName);
 
-            await sharp(req.file.buffer)
-                .resize(width, height)
-                .toFormat('webp', { quality: 95 })
-                .toFile(uploadPath);
+        const fileName = `${fieldName}-${uuidv4()}-${Date.now()}.webp`;
+        const uploadPath = path.join(uploadDir, fileName);
+        await sharp(req.file.buffer)
+            .resize(width, height)
+            .toFormat('webp')
+            .webp({ quality: 95 })
+            .toFile(uploadPath);
 
-            req.body.image = fileName;
-        }
-
-        // Multiple files
-        if (req.files) {
-            req.body.images = [];
-            for (const file of req.files) {
-                const fileName = `${folder}-${uuidv4()}-${Date.now()}.webp`;
-                const uploadPath = path.join(uploadDir, fileName);
-
-                await sharp(file.buffer)
-                    .resize(width, height)
-                    .toFormat('webp', { quality: 95 })
-                    .toFile(uploadPath);
-
-                req.body.images.push(fileName);
-            }
-        }
-
+        req.body[fieldName] = fileName;
         next();
     });
 
+exports.resizeProductImages = asyncHandler(async (req, res, next) => {
+    const uploadDir = path.join(__dirname, '../../uploads/products');
+    await fs.promises.mkdir(uploadDir, { recursive: true });
 
+    // Image cover
+    if (req.files.imageCover) {
+        const imageCoverFileName = `product-cover-${uuidv4()}-${Date.now()}.webp`;
+        const uploadPath = path.join(uploadDir, imageCoverFileName);
+        await sharp(req.files.imageCover[0].buffer)
+            .resize(2000, 1333)
+            .toFormat('webp')
+            .webp({ quality: 95 })
+            .toFile(uploadPath);
+
+        req.body.imageCover = imageCoverFileName;
+    }
+
+    // Multiple images
+    if (req.files.images) {
+        req.body.images = [];
+        await Promise.all(
+            req.files.images.map(async (file, index) => {
+                const fileName = `product-${uuidv4()}-${Date.now()}-${index + 1}.webp`;
+                const uploadPath = path.join(uploadDir, fileName);
+
+                await sharp(file.buffer)
+                    .resize(600, 600)
+                    .toFormat('webp')
+                    .webp({ quality: 95 })
+                    .toFile(uploadPath);
+
+                req.body.images.push(fileName);
+            })
+        );
+    }
+
+    next();
+});

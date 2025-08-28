@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const subCategoryRoutes = require('../subCategory/subCategory.routes');
-const { uploadCategoryImage, resizeImage, createCategory, getCategories, getCategory, updateCategory, deleteCategory } = require('./category.controller');
+const { uploadCategoryImage, resizeAndSaveSingleImage, createCategory, getCategories, getCategory, updateCategory, deleteCategory } = require('./category.controller');
 const { getCategoryValidator, createCategoryValidator, updateCategoryValidator, deleteCategoryValidator } = require('./category.validators');
 
 /**
@@ -22,7 +22,7 @@ router
     .get(getCategories)
     .post(
         uploadCategoryImage,
-        resizeImage,
+        resizeAndSaveSingleImage,
         createCategoryValidator,
         createCategory
     );
@@ -36,7 +36,7 @@ router
     .get(getCategoryValidator, getCategory)
     .put(
         uploadCategoryImage,
-        resizeImage,
+        resizeAndSaveSingleImage,
         updateCategoryValidator,
         updateCategory
     )

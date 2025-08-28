@@ -1,13 +1,12 @@
 /** @type {import('mongoose').Model} */
 const Category = require('./category.model');
 const factory = require('../../shared/utils/handlers/handlerFactory');
-const { uploadSingleImage, resizeAndSaveImage } = require('../../shared/middlewares/uploadImageMiddleware');
 
-// Upload single image
+const { uploadSingleImage, resizeAndSaveSingleImage } = require('../../shared/middlewares/uploadImageMiddleware');
+
 exports.uploadCategoryImage = uploadSingleImage('image');
 
-// Iimage processing 
-exports.resizeImage = resizeAndSaveImage('categories', 600, 600);
+exports.resizeAndSaveSingleImage = resizeAndSaveSingleImage('categories', 'image', 600, 600);
 
 /**
  * @desc Create new category

@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const slugifyPlugin = require('../../shared/utils/plugins/slugifyPlugin');
+const imageUrlPlugin = require('../../shared/utils/plugins/imageUrlPlugin');
 
 const productSchema = mongoose.Schema({
     title: {
@@ -70,7 +71,7 @@ const productSchema = mongoose.Schema({
     timestamps: true
 });
 
-
+productSchema.plugin(imageUrlPlugin, { folder: 'products', fields: ['imageCover', 'images'] });
 productSchema.plugin(slugifyPlugin, { sourceField: 'title', slugField: 'slug' });
 
 const Product = mongoose.model('Product', productSchema);
