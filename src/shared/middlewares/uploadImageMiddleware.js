@@ -60,7 +60,7 @@ exports.resizeProductImages = asyncHandler(async (req, res, next) => {
         req.body.images = [];
         await Promise.all(
             req.files.images.map(async (file, index) => {
-                const fileName = `product-${uuidv4()}-${Date.now()}-${index + 1}.webp`;
+                const fileName = `product-${uuidv4()}-${Date.now()}.webp`;
                 const uploadPath = path.join(uploadDir, fileName);
 
                 await sharp(file.buffer)
