@@ -26,7 +26,7 @@ exports.resizeAndSaveSingleImage = (folder, fieldName, width, height) =>
         await fs.promises.mkdir(uploadDir, { recursive: true });
 
 
-        const fileName = `${fieldName}-${uuidv4()}-${Date.now()}.webp`;
+        const fileName = `${folder}-${uuidv4()}-${Date.now()}.webp`;
         const uploadPath = path.join(uploadDir, fileName);
         await sharp(req.file.buffer)
             .resize(width, height)
