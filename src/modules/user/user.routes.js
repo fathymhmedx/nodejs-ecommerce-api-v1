@@ -2,14 +2,14 @@ const express = require('express');
 const router = express.Router();
 
 const { uploadUserImage, resizeAndSaveSingleImage, createUser, getUsers, getUser, updateUser, deleteUser } = require('./user.controller');
-const { } = require('./user.validators')
+const { createUserValidator, getUserValidator, updateUserValidator, deleteUserValidator } = require('./user.validators')
 
 router
     .route('/')
     .post(
         uploadUserImage,
         resizeAndSaveSingleImage,
-        // createUserValidator,
+        createUserValidator,
         createUser
     )
     .get(getUsers)
@@ -17,17 +17,17 @@ router
 router
     .route('/:id')
     .get(
-        // getUserValidator,
+        getUserValidator,
         getUser
     )
     .put(
         uploadUserImage,
         resizeAndSaveSingleImage,
-        // updateUserValidator,
+        updateUserValidator,
         updateUser
     )
     .delete(
-        // deleteUserValidator,
+        deleteUserValidator,
         deleteUser
     )
 

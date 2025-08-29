@@ -15,22 +15,14 @@ exports.createSubCategoryValidator = [
     validateRequest
 ];
 
-exports.getSubCategoryValidator = [
-    param('id')
-        .isMongoId()
-        .withMessage('Invalid subCategory id format'),
-    validateRequest
-];
 
-exports.updateSubCategoryValidator = [
-    param('id')
-        .isMongoId()
-        .withMessage('Invalid subCategory id format'),
-    validateRequest
-]
-exports.deleteSubCategoryValidator = [
-    param('id')
-        .isMongoId()
-        .withMessage('Invalid subCategory id format'),
-    validateRequest
-]
+const idValidator = param('id')
+    .isMongoId()
+    .withMessage('Invalid subCategory ID format');
+
+
+exports.getSubCategoryValidator = [idValidator, validateRequest];
+
+exports.updateSubCategoryValidator = [idValidator, validateRequest];
+
+exports.deleteSubCategoryValidator = [idValidator, validateRequest];

@@ -12,23 +12,15 @@ exports.createCategoryValidator = [
         .withMessage('Category name must not exceed 32 characters'),
     validateRequest
 ]
-exports.getCategoryValidator = [
-    param('id')
-        .isMongoId()
-        .withMessage('Invalid category id format'),
-    validateRequest
-]
-exports.updateCategoryValidator = [
-    param('id')
-        .isMongoId()
-        .withMessage('Invalid category id format'),
-    validateRequest
-]
 
-exports.deleteCategoryValidator = [
-    param('id')
-        .isMongoId()
-        .withMessage('Invalid category id format'),
-    validateRequest
-]
+const idValidator = param('id')
+    .isMongoId()
+    .withMessage('Invalid Category ID format');
+
+
+exports.getCategoryValidator = [idValidator, validateRequest];
+
+exports.updateCategoryValidator = [idValidator, validateRequest];
+
+exports.deleteCategoryValidator = [idValidator, validateRequest];
 

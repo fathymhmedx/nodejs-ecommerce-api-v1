@@ -114,18 +114,12 @@ exports.createProductValidator = [
 ];
 
 
-exports.getProductValidator = [
-    param('id').isMongoId().withMessage('Inavlid ID format'),
-    validateRequest
-]
+const idValidator = param('id')
+    .isMongoId()
+    .withMessage('Invalid Product ID format');
 
-exports.updateProductValidator = [
-    param('id').isMongoId().withMessage('Inavlid ID format'),
-    validateRequest
-]
+exports.getProductValidator = [idValidator, validateRequest];
 
-exports.deleteProductValidator = [
-    param('id').isMongoId().withMessage('Inavlid ID format'),
-    validateRequest
-]
+exports.updateProductValidator = [idValidator, validateRequest];
 
+exports.deleteProductValidator = [idValidator, validateRequest];

@@ -13,23 +13,14 @@ exports.createBrandValidator = [
     validateRequest
 ]
 
-exports.getBrandValidator = [
-    param('id')
-        .isMongoId()
-        .withMessage('Invalid brand id format'),
-    validateRequest
-]
+const idValidator = param('id')
+    .isMongoId()
+    .withMessage('Invalid Brand ID format');
 
-exports.updateBrandValidator = [
-    param('id')
-        .isMongoId()
-        .withMessage('Invalid brand id format'),
-    validateRequest
-]
 
-exports.deleteBrandValidator = [
-    param('id')
-        .isMongoId()
-        .withMessage('Invalid brand id format'),
-    validateRequest
-]
+
+exports.getBrandValidator = [idValidator, validateRequest];
+
+exports.updateBrandValidator = [idValidator, validateRequest];
+
+exports.deleteBrandValidator = [idValidator, validateRequest];
