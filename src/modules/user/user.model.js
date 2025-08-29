@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const slugifyPlugin = require('../../shared/utils/plugins/slugifyPlugin');
+const imageUrlPlugin = require('../../shared/utils/plugins/imageUrlPlugin');
 
 const userSchema = mongoose.Schema({
     name: {
@@ -16,6 +17,7 @@ const userSchema = mongoose.Schema({
     email: {
         type: String,
         lowercase: true,
+        trim: true,
         required: [true, 'Email is required'],
         unique: [true, 'Email must be unique'],
     },
@@ -23,6 +25,7 @@ const userSchema = mongoose.Schema({
         type: String,
         required: [true, 'Password must be unique'],
         minlength: [6, "Password must be at least 6 characters long"],
+        select: false,
     },
     phone: String,
     profileImage: String,
@@ -49,6 +52,21 @@ userSchema.pre('save', async function (next) {
 });
 
 
+userSchema.set('toJSON', {
+    transform: function (doc, ret, options) {
+        delete ret.password;
+        return ret;
+    }
+});
+
+userSchema.set('toObject', {
+    transform: function (doc, ret, options) {
+        delete ret.password;
+        return ret;
+    }
+});
+
+userSchema.plugin(imageUrlPlugin, { folder: 'users', fields: ['profileImage'] });
 userSchema.plugin(slugifyPlugin, { sourceField: 'name', slugField: 'slug' });
 
 const User = mongoose.model('User', userSchema);

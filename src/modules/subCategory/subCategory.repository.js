@@ -1,1 +1,0 @@
-// Responsible for dealing with the database only
