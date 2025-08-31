@@ -45,11 +45,14 @@ const userSchema = mongoose.Schema({
 // pre-save hook
 userSchema.pre('save', async function (next) {
     if (!this.isModified('password')) return next()
+    console.log('pre-save middleware triggered');
+
     //hashing user password
     const salt = await bcrypt.genSalt(12);
     this.password = await bcrypt.hash(this.password, salt);
     next()
 });
+
 
 
 userSchema.set('toJSON', {
@@ -71,3 +74,14 @@ userSchema.plugin(slugifyPlugin, { sourceField: 'name', slugField: 'slug' });
 
 const User = mongoose.model('User', userSchema);
 module.exports = User;
+// userSchema.pre('findOneAndUpdate', async function (next) {
+//     const update = this.getUpdate();
+
+//     if (update.password) {
+//         const salt = await bcrypt.genSalt(12);
+//         update.password = await bcrypt.hash(update.password, salt);
+//         this.setUpdate(update);
+//     }
+
+//     next();
+// });

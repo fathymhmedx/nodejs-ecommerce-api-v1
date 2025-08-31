@@ -1,8 +1,13 @@
 // Controls requests and responses
+const asyncHandler = require('express-async-handler');
+const bcrypt = require('bcryptjs');
+
 /** @type {import('mongoose').Model} */
 const User = require('../user/user.model');
+const ApiError = require('../../shared/errors/ApiError');
 const factory = require('../../shared/utils/handlers/handlerFactory');
 const { uploadSingleImage, resizeAndSaveSingleImage } = require('../../shared/middlewares/uploadImageMiddleware');
+
 
 exports.uploadUserImage = uploadSingleImage('profileImage');
 
@@ -37,8 +42,42 @@ exports.getUser = factory.getOne(User);
 exports.updateUser = factory.updateOne(User);
 
 /**
+ * @route   PUT /api/v1/users/:id/change-password
+ * @desc    Update user password
+ * @access  private
+ */
+exports.changePassword = asyncHandler(async (req, res, next) => {
+    const { id } = req.params;
+    const { currentPassword, password } = req.body
+    
+    const user = await User.findById(id).select('+password');
+    if (!user) {
+        next(new ApiError(`No user found for id: ${id}`, 404));
+    }
+
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+        return next(new ApiError('Current password is incorrect', 401));
+    }
+
+    // Save new password
+    user.password = req.body.password;
+
+    // pre('save') hook will automatically hash the password
+    await user.save();
+
+    res.status(200).json({
+        status: 'success',
+        message: 'Password updated successfully',
+    })
+});
+
+/**
  * @route   DELETE /api/v1/users/:id
  * @desc    Delete a specific User by ID
  * @access  private
  */
 exports.deleteUser = factory.deleteOne(User);
+
+

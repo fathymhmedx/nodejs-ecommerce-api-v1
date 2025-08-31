@@ -3,6 +3,7 @@ const { validateRequest } = require('../../shared/middlewares/validatorMiddlewar
 
 /** @type {import('mongoose').Model} */
 const User = require('../user/user.model');
+const ApiError = require('../../shared/errors/ApiError');
 
 exports.createUserValidator = [
     body('name')
@@ -18,8 +19,8 @@ exports.createUserValidator = [
         .isEmail()
         .withMessage('Invalid email address')
         .normalizeEmail()
-        .custom(async (value) => {
-            const existingUser = await User.findOne({ email: value });
+        .custom(async (val) => {
+            const existingUser = await User.findOne({ email: val });
             if (existingUser) {
                 throw new Error('Email already exists');
             }
@@ -41,8 +42,8 @@ exports.createUserValidator = [
     body('confirmPassword')
         .notEmpty()
         .withMessage('Confirm password is required')
-        .custom((value, { req }) => {
-            if (value !== req.body.password) {
+        .custom((val, { req }) => {
+            if (val !== req.body.password) {
                 throw new Error('Passwords do not match');
             }
             return true;
@@ -63,6 +64,35 @@ exports.createUserValidator = [
     validateRequest
 ]
 
+exports.changePasswordValidator = [
+    body('currentPassword')
+        .notEmpty()
+        .withMessage('Current password is required'),
+
+    body('password')
+        .notEmpty()
+        .withMessage('Password is required')
+        .isStrongPassword({
+            minLength: 8,
+            minLowercase: 1,
+            minUppercase: 1,
+            minNumbers: 1,
+            minSymbols: 1
+        })
+        .withMessage('Password must be at least 8 characters long and include uppercase, lowercase, number, and symbol'),
+
+    body('confirmPassword')
+        .notEmpty()
+        .withMessage('Confirm password is required')
+        .custom((val, { req }) => {
+            if (val !== req.body.password) {
+                throw new Error('Confirm password must match the new password');
+            }
+            return true;
+        }),
+
+    validateRequest
+];
 
 const idValidator = param('id')
     .isMongoId()
