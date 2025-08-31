@@ -99,5 +99,40 @@ const idValidator = param('id')
     .withMessage('Invalid user ID format');
 
 exports.getUserValidator = [idValidator, validateRequest];
-exports.updateUserValidator = [idValidator, validateRequest];
+exports.updateUserValidator = [
+    idValidator,
+    body('name')
+        .notEmpty()
+        .withMessage('User name is required')
+        .trim()
+        .isLength({ min: 3 })
+        .withMessage('User name must be at least 3 characters long'),
+
+    body('email')
+        .notEmpty()
+        .withMessage('Email is required')
+        .isEmail()
+        .withMessage('Invalid email address')
+        .normalizeEmail()
+        .custom(async (val) => {
+            const existingUser = await User.findOne({ email: val });
+            if (existingUser) {
+                throw new Error('Email already exists');
+            }
+            return true;
+        }),
+    body('phone')
+        .optional()
+        .isMobilePhone(['ar-EG', 'ar-SA'])
+        .withMessage('Invalid phone number, must be Egyptian or Saudi format'),
+
+    body('profileImage').optional(),
+
+    body('role')
+        .optional()
+        .isIn(['user', 'admin'])
+        .withMessage('Role must be either user or admin'),
+
+     validateRequest
+    ];
 exports.deleteUserValidator = [idValidator, validateRequest];
