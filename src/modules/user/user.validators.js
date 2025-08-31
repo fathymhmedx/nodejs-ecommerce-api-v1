@@ -11,7 +11,7 @@ exports.createUserValidator = [
         .trim()
         .isLength({ min: 3 })
         .withMessage('User name must be at least 3 characters long'),
-        
+
     body('email')
         .notEmpty()
         .withMessage('Email is required')
@@ -38,6 +38,15 @@ exports.createUserValidator = [
         })
         .withMessage('Password must be at least 8 characters long and include uppercase, lowercase, number, and symbol'),
 
+    body('confirmPassword')
+        .notEmpty()
+        .withMessage('Confirm password is required')
+        .custom((value, { req }) => {
+            if (value !== req.body.password) {
+                throw new Error('Passwords do not match');
+            }
+            return true;
+        }),
     body('phone')
         .optional()
         .isMobilePhone(['ar-EG', 'ar-SA'])
