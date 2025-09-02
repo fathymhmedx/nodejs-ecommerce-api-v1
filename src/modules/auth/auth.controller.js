@@ -39,8 +39,8 @@ exports.login = asyncHandler(async (req, res, next) => {
     const { email, password } = req.body;
     const user = await User.findOne({ email }).select('+password');
     if (!user) return next(new ApiError('Incorrect email or password', 401));
-
-    const isMatch = await bcrypt.compare(password, user.password);
+    
+    const isMatch = await user.comparePassword(password)
     if (!isMatch) return next(new ApiError('Incorrect email or password', 401));
 
     // Extra safety (even with select: false): hide password before response
