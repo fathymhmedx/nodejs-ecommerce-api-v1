@@ -3,9 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const hpp = require('hpp');
-const xss = require('xss-clean');
-const mongoSanitize = require('express-mongo-sanitize');
-
+const compression = require('compression');
 
 // const rateLimit = require('express-rate-limit');
 const dotenv = require('dotenv');
@@ -21,19 +19,18 @@ app.disable('x-powered-by');
 
 // 3. Global middlewares
 
+app.use(cors({
+    // Allow all origins (change to specific domain in production, like: origin: process.env.CLIENT_URL)
+    origin: process.env.CLIENT_URL,
+    credentials: true,
+}));
 app.use(express.json())
 app.use(express.static(path.join(__dirname, './src/uploads')));
 
-app.use(xss());
-app.use(mongoSanitize());
+app.use(compression());
 app.use(helmet());
 app.use(hpp());
 
-app.use(cors({
-    origin: "*",
-    // Allow all origins (change to specific domain in production, like: origin: process.env.CLIENT_URL)
-    credentials: true,
-}));
 
 // 4. Logger
 const { initLogger } = require('./src/shared/config/logger.js')

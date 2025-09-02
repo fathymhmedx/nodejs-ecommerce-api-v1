@@ -74,14 +74,3 @@ userSchema.plugin(slugifyPlugin, { sourceField: 'name', slugField: 'slug' });
 
 const User = mongoose.model('User', userSchema);
 module.exports = User;
-// userSchema.pre('findOneAndUpdate', async function (next) {
-//     const update = this.getUpdate();
-
-//     if (update.password) {
-//         const salt = await bcrypt.genSalt(12);
-//         update.password = await bcrypt.hash(update.password, salt);
-//         this.setUpdate(update);
-//     }
-
-//     next();
-// });
