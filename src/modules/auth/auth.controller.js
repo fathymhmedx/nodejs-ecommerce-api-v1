@@ -71,6 +71,11 @@ exports.login = asyncHandler(async (req, res, next) => {
     })
 });
 
+/**
+ * @route   protect middleware
+ * @desc    Protect routes by verifying JWT, checking user existence and password change
+ * @access  Private
+ */
 exports.protect = asyncHandler(async (req, res, next) => {
     // 1) Check if token exist and if exist get it
     let token;
