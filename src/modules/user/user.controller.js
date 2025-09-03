@@ -48,8 +48,8 @@ exports.updateUser = factory.updateOne(User);
  */
 exports.changePassword = asyncHandler(async (req, res, next) => {
     const { id } = req.params;
-    const { currentPassword, password } = req.body
-    
+    const { currentPassword } = req.body
+
     const user = await User.findById(id).select('+password');
     if (!user) {
         next(new ApiError(`No user found for id: ${id}`, 404));
@@ -61,7 +61,8 @@ exports.changePassword = asyncHandler(async (req, res, next) => {
         return next(new ApiError('Current password is incorrect', 401));
     }
 
-    // Save new password
+    // Save new password && when set new password (passwordChangedAt will update automatically in pre-save hook)
+
     user.password = req.body.password;
 
     // pre('save') hook will automatically hash the password

@@ -27,6 +27,10 @@ const userSchema = mongoose.Schema({
         minlength: [8, "Password must be at least 8 characters long"],
         select: false,
     },
+    passwordChangedAt: {
+        type: Date,
+        select: false
+    },
     phone: String,
     profileImage: String,
     role: {
@@ -45,7 +49,9 @@ const userSchema = mongoose.Schema({
 // pre-save hook
 userSchema.pre('save', async function (next) {
     if (!this.isModified('password')) return next()
-    console.log('pre-save middleware triggered');
+
+    // Update passwordChangedAt when password changes (subtract 1s to avoid token timing issues)
+    this.passwordChangedAt = Date.now() - 1000;
 
     //hashing user password
     const salt = await bcrypt.genSalt(12);
