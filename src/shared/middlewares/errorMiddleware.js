@@ -1,6 +1,17 @@
 const ApiError = require('../errors/ApiError');
 
-const handleCastErrorDB = err => {
+const handleJwtInvalidSignature = () => {
+    const message = 'Invalid token, please login again..';
+    return new ApiError(message, 401);
+
+}
+
+const handleJwtExpired = () => {
+    const message = 'Token expired, please login again..';
+    return new ApiError(message, 401);
+}
+
+const handleCastErrorDB = (err) => {
     const message = `Invalid ${err.path}: ${err.value}`;
     return new ApiError(message, 400)
 }
@@ -58,20 +69,18 @@ exports.globalErrorHandler = (err, req, res, next) => {
 
     } else if (process.env.NODE_ENV === 'production') {
 
-        let error = {
-            ...err,
-            message: err.message,
-            name: err.name,
-            cause: err.cause,
-            stack: err.stack
-        };
+        let error = Object.create(err);
+        error.message = err.message;
+        error.name = err.name;
+        error.cause = err.cause;
 
         const duplicateCode = (error.code === 11000 || error?.cause?.code === 11000);
 
         if (error.name === 'CastError') error = handleCastErrorDB(error);
         if (duplicateCode) error = handleDuplicateFieldsDB(error);
-        if (error.name === 'ValidationError') error = handleValidationErrorDB(error)
-
+        if (error.name === 'ValidationError') error = handleValidationErrorDB(error);
+        if (error.name === 'JsonWebTokenError') error = handleJwtInvalidSignature();
+        if (error.name === 'TokenExpiredError') error = handleJwtExpired();
         sendErrorProd(error, res);
     }
 }
