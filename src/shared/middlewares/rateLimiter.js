@@ -10,6 +10,8 @@ exports.loginLimiter = rateLimit({
         const resetTime = req.rateLimit.resetTime?.getTime() || now;
         const retryAfterMs = resetTime - now;
 
+        res.set('Retry-After', Math.ceil(retryAfterMs / 1000));
+
         const minutes = Math.floor(retryAfterMs / 60000);
         const seconds = Math.floor((retryAfterMs % 60000) / 1000);
 
