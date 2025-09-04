@@ -102,15 +102,13 @@ exports.getUserValidator = [idValidator, validateRequest];
 exports.updateUserValidator = [
     idValidator,
     body('name')
-        .notEmpty()
-        .withMessage('User name is required')
+        .optional()
         .trim()
         .isLength({ min: 3 })
         .withMessage('User name must be at least 3 characters long'),
 
     body('email')
-        .notEmpty()
-        .withMessage('Email is required')
+        .optional()
         .isEmail()
         .withMessage('Invalid email address')
         .normalizeEmail()
