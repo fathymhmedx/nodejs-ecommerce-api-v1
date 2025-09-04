@@ -3,7 +3,7 @@ const router = express.Router();
 const subCategoryRoutes = require('../subCategory/subCategory.routes');
 const { uploadCategoryImage, resizeAndSaveSingleImage, createCategory, getCategories, getCategory, updateCategory, deleteCategory } = require('./category.controller');
 const { getCategoryValidator, createCategoryValidator, updateCategoryValidator, deleteCategoryValidator } = require('./category.validators');
-const { protect } = require('../auth/auth.controller');
+const { protect, authorizeRoles } = require('../../shared/middlewares/authMiddleware');
 
 /**
  * @route GET /api/v1/categories/:categoryId/subcategories
@@ -23,6 +23,7 @@ router
     .get(getCategories)
     .post(
         protect,
+        authorizeRoles('admin'),
         uploadCategoryImage,
         resizeAndSaveSingleImage,
         createCategoryValidator,
