@@ -57,8 +57,8 @@ exports.createUserValidator = [
 
     body('role')
         .optional()
-        .isIn(['user', 'admin'])
-        .withMessage('Role must be either user or admin'),
+        .isIn(['user', 'manager', 'admin'])
+        .withMessage('Role must be either user, manager or admin'),
 
 
     validateRequest
@@ -128,9 +128,9 @@ exports.updateUserValidator = [
 
     body('role')
         .optional()
-        .isIn(['user', 'admin'])
-        .withMessage('Role must be either user or admin'),
+        .isIn(['user', 'manager', 'admin'])
+        .withMessage('Role must be either user, manager or admin'),
 
-     validateRequest
-    ];
+    validateRequest
+];
 exports.deleteUserValidator = [idValidator, validateRequest];
