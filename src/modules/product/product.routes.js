@@ -14,9 +14,9 @@ router
     .post(
         protect,
         authorizeRoles('admin', 'manager'),
-        createProductValidator,
         uploadProductImages,
         resizeProductImages,
+        createProductValidator,
         createProduct
     )
 
@@ -30,9 +30,9 @@ router
     .put(
         protect,
         authorizeRoles('admin', 'manager'),
-        updateProductValidator,
         uploadProductImages,
         resizeProductImages,
+        updateProductValidator,
         updateProduct
     )
     .delete(

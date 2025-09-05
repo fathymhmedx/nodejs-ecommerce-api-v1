@@ -24,9 +24,9 @@ router
     .post(
         protect,
         authorizeRoles('admin', 'manager'),
-        createCategoryValidator,
         uploadCategoryImage,
         resizeAndSaveSingleImage,
+        createCategoryValidator,
         createCategory
     );
 
@@ -40,9 +40,9 @@ router
     .put(
         protect,
         authorizeRoles('admin', 'manager'),
-        updateCategoryValidator,
         uploadCategoryImage,
         resizeAndSaveSingleImage,
+        updateCategoryValidator,
         updateCategory
     )
     .delete(

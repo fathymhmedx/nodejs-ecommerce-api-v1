@@ -15,9 +15,9 @@ router
     .post(
         protect,
         authorizeRoles('admin'),
-        createUserValidator,
         uploadUserImage,
         resizeAndSaveSingleImage,
+        createUserValidator,
         createUser
     )
 
@@ -32,9 +32,9 @@ router
     .put(
         protect,
         authorizeRoles('admin'),
-        updateUserValidator,
         uploadUserImage,
         resizeAndSaveSingleImage,
+        updateUserValidator,
         updateUser
     )
     .delete(

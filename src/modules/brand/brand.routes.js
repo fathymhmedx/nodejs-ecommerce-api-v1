@@ -11,9 +11,9 @@ router
     .post(
         protect,
         authorizeRoles('admin', 'manager'),
-        createBrandValidator,
         uploadBrandImage,
         resizeAndSaveSingleImage,
+        createBrandValidator,
         createBrand
     )
 
@@ -23,9 +23,9 @@ router
     .put(
         protect,
         authorizeRoles('admin', 'manager'),
-        updateBrandValidator,
         uploadBrandImage,
         resizeAndSaveSingleImage,
+        updateBrandValidator,
         updateBrand
     )
     .delete(
