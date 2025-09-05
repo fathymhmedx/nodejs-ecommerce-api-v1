@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router({ mergeParams: true });
 const { createSubCategory, setCategoryIdToBody, createFilterObj, getSubCategories, getSubCategory, updateSubCategory, deleteSubCategory } = require('./subCategory.controller');
 const { createSubCategoryValidator, getSubCategoryValidator, updateSubCategoryValidator, deleteSubCategoryValidator } = require('./subCategory.validators');
+const { protect, authorizeRoles } = require('../../shared/middlewares/authMiddleware');
 
 /**
  * @route   GET /api/v1/subcategories
@@ -14,12 +15,14 @@ const { createSubCategoryValidator, getSubCategoryValidator, updateSubCategoryVa
 
 router
     .route('/')
+    .get(createFilterObj, getSubCategories)
     .post(
-        setCategoryIdToBody,
+        protect,
+        authorizeRoles('admin', 'manager'),
         createSubCategoryValidator,
+        setCategoryIdToBody,
         createSubCategory
     )
-    .get(createFilterObj, getSubCategories)
 
 /**
  * @route GET, PUT, DELETE /api/v1/subcategories/:id
@@ -28,15 +31,16 @@ router
  */
 router
     .route('/:id')
-    .get(
-        getSubCategoryValidator,
-        getSubCategory
-    )
+    .get(getSubCategoryValidator, getSubCategory)
     .put(
+        protect,
+        authorizeRoles('admin', 'manager'),
         updateSubCategoryValidator,
         updateSubCategory
     )
     .delete(
+        protect,
+        authorizeRoles('admin'),
         deleteSubCategoryValidator,
         deleteSubCategory
     )

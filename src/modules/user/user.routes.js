@@ -3,30 +3,43 @@ const router = express.Router();
 
 const { uploadUserImage, resizeAndSaveSingleImage, createUser, getUsers, getUser, updateUser, changePassword, deleteUser } = require('./user.controller');
 const { createUserValidator, getUserValidator, updateUserValidator, deleteUserValidator, changePasswordValidator } = require('./user.validators')
+const { protect, authorizeRoles } = require('../../shared/middlewares/authMiddleware');
 
 router
     .route('/')
+    .get(
+        protect,
+        authorizeRoles('admin', 'manager'),
+        getUsers
+    )
     .post(
+        protect,
+        authorizeRoles('admin'),
+        createUserValidator,
         uploadUserImage,
         resizeAndSaveSingleImage,
-        createUserValidator,
         createUser
     )
-    .get(getUsers)
 
 router
     .route('/:id')
     .get(
+        protect,
+        authorizeRoles('admin'),
         getUserValidator,
         getUser
     )
     .put(
+        protect,
+        authorizeRoles('admin'),
+        updateUserValidator,
         uploadUserImage,
         resizeAndSaveSingleImage,
-        updateUserValidator,
         updateUser
     )
     .delete(
+        protect,
+        authorizeRoles('admin'),
         deleteUserValidator,
         deleteUser
     )
@@ -36,6 +49,7 @@ router
 router
     .route('/:id/change-password')
     .put(
+        protect,
         changePasswordValidator,
         changePassword
     )

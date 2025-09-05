@@ -23,10 +23,10 @@ router
     .get(getCategories)
     .post(
         protect,
-        authorizeRoles('admin'),
+        authorizeRoles('admin', 'manager'),
+        createCategoryValidator,
         uploadCategoryImage,
         resizeAndSaveSingleImage,
-        createCategoryValidator,
         createCategory
     );
 
@@ -38,12 +38,19 @@ router
     .route('/:id')
     .get(getCategoryValidator, getCategory)
     .put(
+        protect,
+        authorizeRoles('admin', 'manager'),
+        updateCategoryValidator,
         uploadCategoryImage,
         resizeAndSaveSingleImage,
-        updateCategoryValidator,
         updateCategory
     )
-    .delete(deleteCategoryValidator, deleteCategory)
+    .delete(
+        protect,
+        authorizeRoles('admin'),
+        deleteCategoryValidator,
+        deleteCategory
+    )
 
 
 module.exports = router;
