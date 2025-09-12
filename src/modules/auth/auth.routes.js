@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { signup, login } = require('../auth/auth.controller')
+const { signup, login, forgotPassword, verifyResetCode, resetPassword } = require('../auth/auth.controller')
 const { signupValidator, loginValidator } = require('../auth/auth.validators')
 const { loginLimiter } = require('../../shared/middlewares/rateLimiter');
 
@@ -18,5 +18,23 @@ router
         loginValidator,
         login
     )
+
+router
+    .route('/forgot-password')
+    .post(
+        forgotPassword
+    )
+
+router
+    .route('/verify-reset-code')
+    .post(
+        verifyResetCode
+    )
+router
+    .route('/reset-password')
+    .post(
+        resetPassword
+    )
+
 
 module.exports = router;
