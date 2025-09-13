@@ -46,7 +46,7 @@ router
     )
 router
     .route('/logout')
-    .get(
+    .post(
         logout
     )
 
