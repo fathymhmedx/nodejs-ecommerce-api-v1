@@ -20,18 +20,18 @@ router
     )
 
 router
-    .route('/forgot-password')
+    .route('/password/forgot')
     .post(
         forgotPassword
     )
 
 router
-    .route('/verify-reset-code')
+    .route('/password/verify')
     .post(
         verifyResetCode
     )
 router
-    .route('/reset-password')
+    .route('/password/reset')
     .post(
         resetPassword
     )

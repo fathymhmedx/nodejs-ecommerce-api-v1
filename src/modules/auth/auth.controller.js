@@ -79,7 +79,7 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
     }
     // 2) If user exist, Generate secure 6 digits code 
     const resetCode = crypto.randomInt(100000, 999999).toString();
-
+    
     // 3) Hash the reset code (for security) 
     const hashedResetCode = crypto
         .createHash('sha256')
@@ -88,7 +88,7 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
 
     // 4) Save hashed code, 10 min expiry, and mark as unverified
     user.passwordResetCode = hashedResetCode;
-    user.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+    user.passwordResetExpires = new Date(Date.now() + 10 * 60 * 1000);
     user.passwordResetVerified = false;
 
     await user.save();
