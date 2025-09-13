@@ -40,7 +40,7 @@ exports.setRefreshCookie = (res, refreshToken) => {
 };
 
 /**
- * @description Helper function: Clear refresh token cookie
+ * @description Helper function: Safely clear refresh token cookie (used in logout & token revocation)
  */
 exports.clearRefreshCookie = (res) => {
     res.clearCookie('refreshToken', {

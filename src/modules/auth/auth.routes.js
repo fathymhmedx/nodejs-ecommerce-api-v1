@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
-const { signup, login, forgotPassword, verifyResetCode, resetPassword, refreshToken } = require('../auth/auth.controller')
-const { signupValidator, loginValidator } = require('../auth/auth.validators')
+const { signup, login, forgotPassword, verifyResetCode, resetPassword, refreshToken, logout } = require('../auth/auth.controller')
+const { signupValidator, loginValidator, forgotPasswordValidator, resetPasswordValidator, verifyResetCodeValidator } = require('../auth/auth.validators')
 const { loginLimiter } = require('../../shared/middlewares/rateLimiter');
 
 router
@@ -22,17 +22,20 @@ router
 router
     .route('/password/forgot')
     .post(
+        forgotPasswordValidator,
         forgotPassword
     )
 
 router
     .route('/password/verify')
     .post(
+        verifyResetCodeValidator,
         verifyResetCode
     )
 router
     .route('/password/reset')
     .post(
+        resetPasswordValidator,
         resetPassword
     )
 
@@ -40,6 +43,11 @@ router
     .route('/refresh-token')
     .get(
         refreshToken
+    )
+router
+    .route('/logout')
+    .get(
+        logout
     )
 
 

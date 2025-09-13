@@ -206,6 +206,7 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
         accessToken
     })
 });
+
 /** 
  * @route  GET /api/v1/auth/refresh-token 
  * @desc   Issue new access token using refresh token cookie 
@@ -246,3 +247,17 @@ exports.refreshToken = asyncHandler(async (req, res, next) => {
         accessToken
     })
 })
+
+/**
+ * @route   POST /api/v1/auth/logout
+ * @desc    Clear refresh token cookie (logout)
+ * @access  public
+ */
+exports.logout = asyncHandler(async (req, res, next) => {
+    clearRefreshCookie(res);
+
+    res.status(200).json({ 
+        status: 'success',
+        message: 'Logged out successfully'
+    })
+});

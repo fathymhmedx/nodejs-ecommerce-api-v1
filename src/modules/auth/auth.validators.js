@@ -65,4 +65,56 @@ exports.loginValidator = [
     validateRequest
 ]
 
+exports.forgotPasswordValidator = [
+    body('email')
+        .notEmpty()
+        .withMessage('Email is required')
+        .isEmail()
+        .withMessage('Invalid email address')
+        .normalizeEmail(),
+    validateRequest
+];
 
+exports.verifyResetCodeValidator = [
+    body('resetCode')
+        .notEmpty()
+        .withMessage('Reset code is required')
+        .isLength({ min: 6, max: 6 })
+        .withMessage('Reset code must be 6 digits')
+        .isNumeric()
+        .withMessage('Reset code must be numeric'),
+    validateRequest
+];
+
+exports.resetPasswordValidator = [
+    body('email')
+        .notEmpty()
+        .withMessage('Email is required')
+        .isEmail()
+        .withMessage('Invalid email address')
+        .normalizeEmail(),
+
+    body('newPassword')
+        .notEmpty()
+        .withMessage('New password is required')
+        .isStrongPassword({
+            minLength: 8,
+            minLowercase: 1,
+            minUppercase: 1,
+            minNumbers: 1,
+            minSymbols: 1
+        })
+        .withMessage('Password must be at least 8 characters long and include uppercase, lowercase, number, and symbol'),
+
+    body('confirmPassword')
+        .notEmpty()
+        .withMessage('Confirm password is required')
+        .custom((val, { req }) => {
+            if (val !== req.body.newPassword) {
+                throw new Error('Passwords do not match');
+            }
+            return true;
+        }),
+
+    validateRequest
+];
