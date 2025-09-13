@@ -4,7 +4,7 @@ const router = express.Router();
 const { signup, login, forgotPassword, verifyResetCode, resetPassword, refreshToken, logout } = require('../auth/auth.controller')
 const { signupValidator, loginValidator, forgotPasswordValidator, resetPasswordValidator, verifyResetCodeValidator } = require('../auth/auth.validators')
 const { loginLimiter } = require('../../shared/middlewares/rateLimiter');
-
+const { protect } = require('../../shared/middlewares/authMiddleware')
 router
     .route('/signup')
     .post(
@@ -47,6 +47,7 @@ router
 router
     .route('/logout')
     .post(
+        protect,
         logout
     )
 

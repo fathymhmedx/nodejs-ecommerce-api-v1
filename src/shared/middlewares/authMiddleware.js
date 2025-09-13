@@ -31,7 +31,9 @@ exports.protect = asyncHandler(async (req, res, next) => {
         return next(new ApiError('The user no longer exists', 401));
     }
 
-
+    if (!currentUser.active) {
+        return next(new ApiError('You have logged out. Please login again', 401));
+    }
 
     // 4) Check if user change his password after token created
     if (currentUser.passwordChangedAt) {

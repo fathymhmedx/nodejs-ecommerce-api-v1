@@ -49,7 +49,12 @@ exports.login = asyncHandler(async (req, res, next) => {
 
     const isMatch = await user.comparePassword(password)
     if (!isMatch) return next(new ApiError('Incorrect email or password', 401));
-
+    
+    // Reactivate user on login
+    if (!user.active) {
+        user.active = true;
+        await user.save();
+    }
     // Extra safety (even with select: false): hide password before response
     user.password = undefined;
 
@@ -215,7 +220,7 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
 
 exports.refreshToken = asyncHandler(async (req, res, next) => {
     // 1) read cookie
-    const refreshToken = req.cookies?.refreshToken; 
+    const refreshToken = req.cookies?.refreshToken;
     if (!refreshToken) {
         return next(new ApiError('Refresh token not provided', 401));
     }
@@ -254,9 +259,14 @@ exports.refreshToken = asyncHandler(async (req, res, next) => {
  * @access  public
  */
 exports.logout = asyncHandler(async (req, res, next) => {
+    // Disable user
+    req.user.active = false;
+    await req.user.save();
+
+    // Clear refresh token cookie
     clearRefreshCookie(res);
 
-    res.status(200).json({ 
+    res.status(200).json({
         status: 'success',
         message: 'Logged out successfully'
     })
