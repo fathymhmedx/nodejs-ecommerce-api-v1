@@ -6,7 +6,7 @@ const asyncHandler = require('express-async-handler');
 const User = require('../user/user.model');
 const ApiError = require('../../shared/errors/ApiError');
 
-const { generateToken } = require('../../shared/utils/generateToken');
+const { generateTokens, setRefreshCookie, clearRefreshCookie, verifyToken } = require('../../shared/utils/auth.utils');
 const { sendEmail } = require('../../shared/utils/sendEmail');
 
 /**
@@ -20,15 +20,17 @@ exports.signup = asyncHandler(async (req, res, next) => {
     // Create user
     const user = await User.create({ name, email, password });
 
-    // Generate token
-    const token = generateToken(user._id);
+    // Generate tokens
+    const { accessToken, refreshToken } = generateTokens(user._id);
 
+    // Set refresh token as cookie
+    setRefreshCookie(res, refreshToken)
     // Response
     res.status(201).json({
         status: 'success',
         data: {
             user,
-            token
+            accessToken
         }
     })
 
@@ -52,14 +54,17 @@ exports.login = asyncHandler(async (req, res, next) => {
     user.password = undefined;
 
     // Generate token 
-    const token = generateToken(user._id);
+    const { accessToken, refreshToken } = generateTokens(user._id);
+
+    // Set refresh token as cookie
+    setRefreshCookie(res, refreshToken);
 
     // Respnose 
     res.status(200).json({
         status: 'success',
         data: {
             user,
-            token
+            accessToken
         }
     })
 });
@@ -79,7 +84,7 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
     }
     // 2) If user exist, Generate secure 6 digits code 
     const resetCode = crypto.randomInt(100000, 999999).toString();
-    
+
     // 3) Hash the reset code (for security) 
     const hashedResetCode = crypto
         .createHash('sha256')
@@ -188,12 +193,56 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
     await user.save();
 
     // 5) if everythings is ok, Generate new token after password change
-    const token = generateToken(user._id);
+    const { accessToken, refreshToken } = generateTokens(user._id);
 
-    // 6) Response
+    // 6) Set refresh token as cookie
+
+    setRefreshCookie(res, refreshToken);
+
+    // 7) Response
     res.status(200).json({
         status: 'success',
         message: 'Password reset successfully. You can now log in with your new password.',
-        token
+        accessToken
     })
 });
+/** 
+ * @route  GET /api/v1/auth/refresh-token 
+ * @desc   Issue new access token using refresh token cookie 
+ * @access public
+ */
+
+exports.refreshToken = asyncHandler(async (req, res, next) => {
+    // 1) read cookie
+    const refreshToken = req.cookies?.refreshToken; 
+    if (!refreshToken) {
+        return next(new ApiError('Refresh token not provided', 401));
+    }
+
+    // 2) verify token
+    const payload = verifyToken(refreshToken, process.env.JWT_REFRESH_SECRET_KEY);
+    if (!payload) {
+        return next(new ApiError('Invalid or expired refresh token', 403));
+    }
+
+    // 3) check user exists
+    const user = await User.findById(payload.userId).select('+passwordChangedAt');
+    if (!user) {
+        return next(new ApiError('User no longer exists', 401));
+    }
+
+    // 4) Use Schema method to check if password was changed after token was issued
+    if (user.isPasswordChangedAfter(payload.iat)) {
+        return next(new ApiError('Password changed recently, please login again', 401));
+    }
+
+    // 5) generate new tokens (rotate refresh) and set cookie
+    const { accessToken, refreshToken: newRefreshToken } = generateTokens(user._id);
+    setRefreshCookie(res, newRefreshToken);
+
+    // 6) respond with new access token
+    res.status(200).json({
+        status: 'success',
+        accessToken
+    })
+})

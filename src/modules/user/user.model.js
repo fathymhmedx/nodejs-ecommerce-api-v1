@@ -20,6 +20,7 @@ const userSchema = mongoose.Schema({
         trim: true,
         required: [true, 'Email is required'],
         unique: [true, 'Email must be unique'],
+        index: true,
     },
     password: {
         type: String,
@@ -65,6 +66,16 @@ userSchema.pre('save', async function (next) {
 userSchema.methods.comparePassword = async function (password) {
     return bcrypt.compare(password, this.password);
 }
+
+userSchema.methods.isPasswordChangedAfter = function (JWTTimestamp) {
+    if (this.passwordChangedAt) {
+        const changedTimestamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
+
+        // Return true if password was changed AFTER the token was issued
+        return JWTTimestamp < changedTimestamp;
+    }
+    return false;
+};
 
 userSchema.set('toJSON', {
     transform: function (doc, ret, options) {

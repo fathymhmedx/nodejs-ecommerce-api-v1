@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { signup, login, forgotPassword, verifyResetCode, resetPassword } = require('../auth/auth.controller')
+const { signup, login, forgotPassword, verifyResetCode, resetPassword, refreshToken } = require('../auth/auth.controller')
 const { signupValidator, loginValidator } = require('../auth/auth.validators')
 const { loginLimiter } = require('../../shared/middlewares/rateLimiter');
 
@@ -34,6 +34,12 @@ router
     .route('/password/reset')
     .post(
         resetPassword
+    )
+
+router
+    .route('/refresh-token')
+    .get(
+        refreshToken
     )
 
 

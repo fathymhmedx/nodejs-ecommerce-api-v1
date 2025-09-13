@@ -2,6 +2,7 @@ const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
+const cookieParser = require('cookie-parser');
 const hpp = require('hpp');
 const compression = require('compression');
 
@@ -18,11 +19,11 @@ const app = express();
 app.disable('x-powered-by');
 
 // 3. Global middlewares
-
+app.use(cookieParser());
 app.use(cors({
     // Allow all origins (change to specific domain in production, like: origin: process.env.CLIENT_URL)
     origin: process.env.CLIENT_URL,
-    credentials: true,
+    credentials: true, // Important because cookies are sent via CORS
 }));
 app.use(express.json())
 app.use(express.static(path.join(__dirname, './src/uploads')));
