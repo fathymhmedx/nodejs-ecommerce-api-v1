@@ -57,6 +57,6 @@ exports.verifyToken = (token, secretKey) => {
     try {
         return jwt.verify(token, secretKey);
     } catch (error) {
-        return null;
+        throw error;
     }
 };

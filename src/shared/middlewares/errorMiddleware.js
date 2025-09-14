@@ -32,8 +32,16 @@ const handleValidationErrorDB = (err) => {
 };
 
 const sendErrorDev = (err, res) => {
-    res.status(err.statusCode).json({
-        status: err.status,
+    if (err.name === 'TokenExpiredError') {
+        return res.status(401).json({
+            status: 'fail',
+            message: 'Access token expired, please refresh token',
+            expiredAt: err.expiredAt
+        });
+    }
+
+    res.status(err.statusCode || 500).json({
+        status: err.status || 'error',
         error: err,
         message: err.message || 'Internal server error',
         stack: err.stack
