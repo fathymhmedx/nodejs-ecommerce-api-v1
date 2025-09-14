@@ -5,15 +5,15 @@ const { uploadUserImage, resizeAndSaveSingleImage, createUser, getUsers, getUser
 const { createUserValidator, getUserValidator, updateUserValidator, deleteUserValidator, changePasswordValidator } = require('./user.validators')
 const { protect, authorizeRoles } = require('../../shared/middlewares/authMiddleware');
 
+router.use(protect);
+
 router
     .route('/')
     .get(
-        protect,
         authorizeRoles('admin', 'manager'),
         getUsers
     )
     .post(
-        protect,
         authorizeRoles('admin'),
         uploadUserImage,
         resizeAndSaveSingleImage,
@@ -24,13 +24,11 @@ router
 router
     .route('/:id')
     .get(
-        protect,
         authorizeRoles('admin'),
         getUserValidator,
         getUser
     )
     .put(
-        protect,
         authorizeRoles('admin'),
         uploadUserImage,
         resizeAndSaveSingleImage,
@@ -38,7 +36,6 @@ router
         updateUser
     )
     .delete(
-        protect,
         authorizeRoles('admin'),
         deleteUserValidator,
         deleteUser
@@ -49,7 +46,6 @@ router
 router
     .route('/:id/change-password')
     .put(
-        protect,
         changePasswordValidator,
         changePassword
     )
