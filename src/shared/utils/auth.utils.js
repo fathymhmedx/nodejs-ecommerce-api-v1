@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-
+const ApiError = require('../errors/ApiError');
 /**
  * @description Generate Access & Refresh tokens
  */
@@ -57,6 +57,6 @@ exports.verifyToken = (token, secretKey) => {
     try {
         return jwt.verify(token, secretKey);
     } catch (error) {
-        throw error;
+        throw new ApiError('Invalid or expired token', 401);
     }
 };

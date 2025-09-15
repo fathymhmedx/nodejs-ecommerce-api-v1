@@ -3,9 +3,8 @@ const { validateRequest } = require('../../shared/middlewares/validatorMiddlewar
 
 /** @type {import('mongoose').Model} */
 const User = require('../user/user.model');
-const ApiError = require('../../shared/errors/ApiError');
 
-exports.createUserValidator = [
+exports.createUserByAdminValidator = [
     body('name')
         .notEmpty()
         .withMessage('User name is required')
@@ -64,7 +63,7 @@ exports.createUserValidator = [
     validateRequest
 ]
 
-exports.changePasswordValidator = [
+exports.updateLoggedUserPasswordValidator = [
     body('currentPassword')
         .notEmpty()
         .withMessage('Current password is required'),
@@ -94,12 +93,28 @@ exports.changePasswordValidator = [
     validateRequest
 ];
 
+exports.updateUserPasswordByAdminValidator = [
+    body('password')
+        .notEmpty()
+        .withMessage('Password is required')
+        .isStrongPassword({
+            minLength: 8,
+            minLowercase: 1,
+            minUppercase: 1,
+            minNumbers: 1,
+            minSymbols: 1
+        })
+        .withMessage('Password must be at least 8 characters long and include uppercase, lowercase, number, and symbol'),
+
+    validateRequest
+];
+
 const idValidator = param('id')
     .isMongoId()
     .withMessage('Invalid user ID format');
 
-exports.getUserValidator = [idValidator, validateRequest];
-exports.updateUserValidator = [
+exports.getUserByAdminValidator = [idValidator, validateRequest];
+exports.updateUserByAdminValidator = [
     idValidator,
     body('name')
         .optional()
@@ -133,4 +148,44 @@ exports.updateUserValidator = [
 
     validateRequest
 ];
-exports.deleteUserValidator = [idValidator, validateRequest];
+exports.deleteUserByAdminValidator = [idValidator, validateRequest];
+
+exports.updateLoggedUserValidator = [
+    body('name')
+        .optional()
+        .trim()
+        .isLength({ min: 3 })
+        .withMessage('User name must be at least 3 characters long'),
+
+    body('email')
+        .optional()
+        .isEmail()
+        .withMessage('Invalid email address')
+        .normalizeEmail()
+        .custom(async (val) => {
+            const existingUser = await User.findOne({ email: val });
+            if (existingUser) {
+                throw new Error('Email already exists');
+            }
+            return true;
+        }),
+    body('phone')
+        .optional()
+        .isMobilePhone(['ar-EG', 'ar-SA'])
+        .withMessage('Invalid phone number, must be Egyptian or Saudi format'),
+
+    body('profileImage').optional(),
+
+    validateRequest
+];
+
+exports.deactivateUserByAdminValidator = [
+    idValidator,
+    validateRequest
+];
+
+exports.reactivateUserByAdminValidator = [
+    idValidator,
+    validateRequest
+];
+

@@ -1,9 +1,10 @@
-const jwt = require('jsonwebtoken');
 const asyncHandler = require('express-async-handler');
 
 /** @type {import('mongoose').Model} */
 const User = require('../../modules/user/user.model');
 const ApiError = require('../../shared/errors/ApiError');
+const { verifyToken } = require('../utils/auth.utils');
+
 
 /**
  * @route   protect middleware
@@ -22,8 +23,7 @@ exports.protect = asyncHandler(async (req, res, next) => {
         return next(new ApiError('You are not logged in. Please login to access this route', 401));
     }
     // 2) verify token (No change happens, expired token)
-    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-
+    const decoded = verifyToken(token, process.env.JWT_SECRET_KEY);
 
     // 3) Check if user still exists
     const currentUser = await User.findById(decoded.userId).select('+passwordChangedAt');
