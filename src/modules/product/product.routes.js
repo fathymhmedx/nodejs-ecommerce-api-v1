@@ -5,12 +5,18 @@ const { createProductValidator, getProductValidator, updateProductValidator, del
 const { protect, authorizeRoles } = require('../../shared/middlewares/authMiddleware');
 
 /**
- * @route GET, POST /api/v1/products
- * @access private
+ * @route   GET /api/v1/products
+ * @desc    Get all products with populated category name only
+ * @access  Public
  */
 router
     .route('/')
     .get(getProducts)
+    /**
+     * @route   POST /api/v1/products
+     * @desc    Create a new product
+     * @access  Private (admin, manager)
+     */
     .post(
         protect,
         authorizeRoles('admin', 'manager'),
@@ -21,12 +27,18 @@ router
     )
 
 /**
- * @route GET, PUT, DELETE /api/v1/products/:id
- * @access private
+ * @route   GET /api/v1/products/:id
+ * @desc    Get details of a specific product by ID
+ * @access  Public
  */
 router
     .route('/:id')
     .get(getProductValidator, getProduct)
+    /**
+     * @route   PUT /api/v1/products/:id
+     * @desc    Update a specific product by ID
+     * @access  Private (admin, manager)
+     */
     .put(
         protect,
         authorizeRoles('admin', 'manager'),
@@ -35,6 +47,11 @@ router
         updateProductValidator,
         updateProduct
     )
+    /**
+     * @route   DELETE /api/v1/products/:id
+     * @desc    Delete a specific product by ID
+     * @access  Private (admin)
+     */
     .delete(
         protect,
         authorizeRoles('admin'),
