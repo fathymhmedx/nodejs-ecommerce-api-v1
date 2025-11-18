@@ -77,19 +77,29 @@ exports.globalErrorHandler = (err, req, res, next) => {
 
     } else if (process.env.NODE_ENV === 'production') {
 
-        let error = Object.create(err);
-        error.message = err.message;
-        error.name = err.name;
-        error.cause = err.cause;
+        let error = { ...err };
+        error.isOperational = error.isOperational || false;
 
-        const duplicateCode = (error.code === 11000 || error?.cause?.code === 11000);
+        // Duplicate key check
+        if (error.code === 11000) {
+            const keyValue = error.keyValue || (error.cause && error.cause.keyValue);
+            const field = Object.keys(keyValue)[0];
+            const value = keyValue[field];
 
+            const message = `Duplicate field: "${field}" with value "${value}". Please use another value!`;
+            error = new ApiError(message, 400);
+            error.isOperational = true;
+        }
+
+
+        // باقي الأخطاء
         if (error.name === 'CastError') error = handleCastErrorDB(error);
-        if (duplicateCode) error = handleDuplicateFieldsDB(error);
         if (error.name === 'ValidationError') error = handleValidationErrorDB(error);
         if (error.name === 'JsonWebTokenError') error = handleJwtInvalidSignature();
         if (error.name === 'TokenExpiredError') error = handleJwtExpired();
+
         sendErrorProd(error, res);
+
     }
 }
 
