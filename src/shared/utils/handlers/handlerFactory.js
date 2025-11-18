@@ -31,7 +31,6 @@ exports.getAll = (Model, populateOptions) =>
             .search()
             .sort()
             .limitFields()
-        // .populate('category', 'name -_id');
 
         // 1) Get total count first
         const total = await Model.countDocuments(features.mongooseQuery._conditions);
@@ -40,7 +39,7 @@ exports.getAll = (Model, populateOptions) =>
         features.paginate(total);
 
         // If used populate
-        if(populateOptions) {
+        if (populateOptions) {
             features.populate(populateOptions.path, populateOptions.select)
         }
         // 3) Run query (after pagination) in parallel with nothing else (but still scalable)
@@ -61,10 +60,17 @@ exports.getAll = (Model, populateOptions) =>
         })
     });
 
-exports.getOne = (Model) =>
+exports.getOne = (Model, populateOptions) =>
     asyncHandler(async (req, res, next) => {
         const { id } = req.params;
-        const doc = await Model.findById(id);
+        // 1) Build query
+        const query = Model.findById(id);
+
+        if (populateOptions) {
+            query.populate(populateOptions.path, populateOptions.select)
+        }
+        // 2) Excute query
+        const doc = await query;
 
         if (!doc) {
             return next(new ApiError(`No ${Model.modelName} found for id: ${id}`, 404));
