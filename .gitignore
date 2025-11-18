@@ -1,2 +1,6 @@
 node_modules/
 config.env
+.early.coverage
+# Ignore all logs
+logs/
+*.log
