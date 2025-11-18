@@ -10,7 +10,7 @@ dotenv.config({ path: './config.env' })
 
 const connectDB = require('./src/shared/config/database');
 // Import the Express app (main: app.js)
-const app = require('./app');
+const app = require('./src/app');
 
 const PORT = process.env.PORT || 8000;
 let server;
