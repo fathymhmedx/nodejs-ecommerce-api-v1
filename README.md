@@ -7,27 +7,35 @@ Ecommerce RESTful API built with **Node.js**, **Express.js**, and **MongoDB** fo
 ---
 
 ## 📁 Project Structure
-    Monolithic modular Architecture
+    Monolithic Modular Architecture
     
 ```
-├── modules/
-│   ├── auth/           # Auth & JWT
-│   ├── brand/          # Brand CRUD
-│   ├── category/       # Category CRUD
-│   ├── subCategory/    # Sub-category CRUD
-│   ├── product/        # Product CRUD & filtering
-│   └── user/           # User management
-├── shared/
-│   ├── config/         # DB connection, logger
-│   ├── errors/         # Custom error handling
-│   ├── middlewares/    # Validators & global errors
-│   └── utils/          # API features (paginate, filter...), dummy data
-├── routes/             # Route entry point
-├── app.js              # Express config
-├── server.js           # Entry point & DB connection
-├── config.env          # Environment variables
-```
-
+├── src/
+│   ├── app.js                          # Express app configuration (middlewares, routes…)
+│   │
+│   ├── modules/                        # Business logic (Modular Architecture)
+│   │   ├── auth/                       # Auth, JWT, login/register, protect routes
+│   │   ├── brand/                      # Brand CRUD
+│   │   ├── category/                   # Category CRUD
+│   │   ├── subCategory/                # Sub-category CRUD
+│   │   ├── product/                    # Product CRUD, filtering, search, pagination
+│   │   └── user/                       # User CRUD, profile, passwords
+│   │
+│   ├── shared/
+│   │   ├── config/                     # Database connection, logger setup
+│   │   ├── errors/                     # Custom ApiError class & global error handler
+│   │   ├── middlewares/                # Auth, validators, rate limiting, uploads
+│   │   └── utils/                      # API features (filter, paginate…), dummy data, helpers
+│   │
+│   ├── routes/                         # Entry point for all module routes
+│   │   └── index.js
+│   │
+│   └── uploads/                        # Uploaded images (users, products, etc.)
+│
+├── server.js                           # App entry point + DB initialization
+├── package.json
+├── README.md
+└── config.env                           # Environment variables
 ---
 
 ## 🧪 Tech Stack
