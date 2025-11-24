@@ -31,7 +31,7 @@ exports.getProducts = factory.getAll(Product, { path: 'category', select: 'name 
  * @desc    Get specific product
  * @access  public
  */
-exports.getProduct = factory.getOne(Product);
+exports.getProduct = factory.getOne(Product, {path: 'reviews'});
 
 /**
  * @route   PUT /api/v1/products/:id

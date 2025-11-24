@@ -22,8 +22,8 @@ router
     .post(
         protect,
         authorizeRoles('admin', 'manager'),
-        createSubCategoryValidator,
         setCategoryIdToBody,
+        createSubCategoryValidator,
         createSubCategory
     )
 

@@ -68,15 +68,25 @@ const productSchema = mongoose.Schema({
         default: 0
     }
 }, {
-    timestamps: true
+    timestamps: true,
+    // // To enable virtual populate
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
+});
+
+// Virtual Populate
+productSchema.virtual('reviews', {
+    ref: 'Review', 
+    foreignField: 'product',
+    localField: '_id'
 });
 
 productSchema.plugin(imageUrlPlugin, { folder: 'products', fields: ['imageCover', 'images'] });
 productSchema.plugin(slugifyPlugin, { sourceField: 'title', slugField: 'slug' });
 // // Custom Indexes
-// productSchema.index({ category: 1 });          // لو هتعمل فلترة كتير بالـ category
-// productSchema.index({ price: 1 });             // لو هتعمل Sorting بالـ price كثير
-// productSchema.index({ createdAt: -1 });        // لو هتجيب أحدث المنتجات
+productSchema.index({ category: 1 });          // لو هتعمل فلترة كتير بالـ category
+productSchema.index({ price: 1 });             // لو هتعمل Sorting بالـ price كثير
+productSchema.index({ createdAt: -1 });        // لو هتجيب أحدث المنتجات
 
 const Product = mongoose.model('Product', productSchema);
 module.exports = Product;

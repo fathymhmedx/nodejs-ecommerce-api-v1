@@ -88,8 +88,9 @@ exports.getOne = (Model, populateOptions) =>
 exports.updateOne = (Model) =>
     asyncHandler(async (req, res, next) => {
         const { id } = req.params;
-
-        const doc = await Model.findByIdAndUpdate(id, req.body, {
+        
+        // triggers post('findOneAndDelete')
+        const doc = await Model.findByIdAndUpdate(id, req.body, { 
             runValidators: true,
             new: true,
         });
@@ -118,6 +119,8 @@ exports.deleteOne = (Model) =>
             return next(new ApiError(`No ${Model.modelName} found for id: ${id}`, 404));
         }
 
+        // Trigger "deleteOne" event when delte document for apply Post Middleware for function (calcAvgRatingsAndQuantity)
+        doc.deleteOne();
         res.status(200).json({
             status: 'success',
             message: `${Model.modelName} deleted successfully`,
