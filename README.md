@@ -131,20 +131,19 @@ config.env
 
 > This is **v1** of the ecommerce backend. The following features are complete:
 
-- [x] Auth & JWT
-- [x] Categories / Brands / Products / users / subcategories CRUD
+- [x] Auth(Access token, refresh token) & JWT
+- [x] Categories / Brands/ Reviews / Products / users / subcategories CRUD
 - [x] MongoDB filtering, sorting, pagination
 - [x] Modular structure with Repository pattern
 - [x] Input validation
 - [x] Global error handler
 - [x] Dummy data seeding
 
+
 > Upcoming:
 - [ ] Cart / Wishlist
 - [ ] Orders & Checkout
-- [ ] Reviews
 - [ ] Payment integration
-- [ ] Admin dashboard & roles
 
 ---
 
