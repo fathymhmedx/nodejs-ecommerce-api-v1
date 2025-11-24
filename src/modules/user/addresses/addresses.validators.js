@@ -1,5 +1,5 @@
 const { body, param } = require('express-validator');
-const { validateRequest } = require('../../shared/middlewares/validatorMiddleware');
+const { validateRequest } = require('../../../shared/middlewares/validatorMiddleware');
 exports.addAddressValidator = [
     body('alias')
         .notEmpty().withMessage('Alias is required')

@@ -8,8 +8,8 @@ const productRoutes = require('../modules/product/product.routes');
 const subCategoryRoutes = require('../modules/subCategory/subCategory.routes');
 const userRoutes = require('../modules/user/user.routes');
 const reviewRoutes = require('../modules/review/review.routes');
-const wishlistRoutes = require('../modules/wishlist/wishlist.routes');
-const addressRoutes = require('../modules/addresses/addresses.routes')
+const wishlistRoutes = require('../modules/user/wishlist/wishlist.routes');
+const addressRoutes = require('../modules/user/addresses/addresses.routes')
 
 router.use('/auth', authRoutes);
 router.use('/categories', categoryRoutes);

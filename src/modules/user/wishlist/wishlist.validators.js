@@ -1,6 +1,6 @@
 const { param, body } = require('express-validator');
-const { validateRequest } = require('../../shared/middlewares/validatorMiddleware');
-const Product = require('../product/product.model');
+const { validateRequest } = require('../../../shared/middlewares/validatorMiddleware');
+const Product = require('../../product/product.model');
 
 exports.addToWishlistValidator = [
     body('productId')

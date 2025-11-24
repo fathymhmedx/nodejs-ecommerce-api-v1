@@ -3,7 +3,7 @@ const router = express.Router();
 
 const { addProductToWishlist, removeProductToWishlist, getLoggedUserWishlist } = require('./wishlist.controller');
 const { addToWishlistValidator, removeFromWishlistValidator } = require('./wishlist.validators')
-const { protect, authorizeRoles } = require('../../shared/middlewares/authMiddleware');
+const { protect, authorizeRoles } = require('../../../shared/middlewares/authMiddleware');
 
 router.use(protect, authorizeRoles('user'));
 

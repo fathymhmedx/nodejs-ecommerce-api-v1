@@ -3,7 +3,7 @@ const router = express.Router();
 
 const { addaddress, removeAddress, getLoggedUseraddresses } = require('./addresses.controller');
 const { addAddressValidator, removeAddressValidator } = require('../addresses/addresses.validators');
-const { protect, authorizeRoles } = require('../../shared/middlewares/authMiddleware');
+const { protect, authorizeRoles } = require('../../../shared/middlewares/authMiddleware');
 
 router.use(protect, authorizeRoles('user'));
 

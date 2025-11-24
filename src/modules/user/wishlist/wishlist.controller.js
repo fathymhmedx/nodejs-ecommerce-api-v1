@@ -1,8 +1,8 @@
 const asyncHandler = require('express-async-handler');
 
 /** @type {import('mongoose').Model} */
-const User = require('../user/user.model');
-const ApiError = require('../../shared/errors/ApiError');
+const User = require('../user.model');
+const ApiError = require('../../../shared/errors/ApiError');
 
 /**
  * @route   POST /api/v1/wishlist
