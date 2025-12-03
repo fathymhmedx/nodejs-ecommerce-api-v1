@@ -249,7 +249,9 @@ exports.refreshToken = asyncHandler(async (req, res, next) => {
     // 6) respond with new access token
     res.status(200).json({
         status: 'success',
-        accessToken
+        data: {
+            accessToken
+        }
     })
 })
 
