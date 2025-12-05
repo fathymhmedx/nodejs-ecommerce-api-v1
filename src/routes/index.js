@@ -12,6 +12,8 @@ const wishlistRoutes = require('../modules/user/wishlist/wishlist.routes');
 const addressRoutes = require('../modules/user/addresses/addresses.routes');
 const couponRoutes = require('../modules/coupon/coupon.routes');
 const cartRoutes = require('../modules/cart/cart.routes');
+const orderRoutes = require('../modules/order/order.routes');
+const pricingSettingsRoutes = require('../modules/pricingSettings/pricingSettings.routes');
 
 router.use('/auth', authRoutes);
 router.use('/categories', categoryRoutes);
@@ -24,5 +26,7 @@ router.use('/wishlist', wishlistRoutes);
 router.use('/addresses', addressRoutes);
 router.use('/coupons', couponRoutes);
 router.use('/cart', cartRoutes);
+router.use('/orders', orderRoutes);
+router.use('/settings', pricingSettingsRoutes);
 
 module.exports = router;
