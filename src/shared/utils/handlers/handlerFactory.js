@@ -38,9 +38,21 @@ exports.getAll = (Model, populateOptions) =>
         // 2) Apply pagination after knowing total
         features.paginate(total);
 
-        // If used populate
+        // If used populate (Support array or single object)
         if (populateOptions) {
-            features.populate(populateOptions.path, populateOptions.select)
+            if (Array.isArray(populateOptions)) {
+                populateOptions.forEach(opt => {
+                    features.mongooseQuery = features.mongooseQuery.populate({
+                        path: opt.path,
+                        select: opt.select
+                    });
+                });
+            } else {
+                features.mongooseQuery = features.mongooseQuery.populate({
+                    path: populateOptions.path,
+                    select: populateOptions.select
+                });
+            }
         }
         // 3) Run query (after pagination) in parallel with nothing else (but still scalable)
         const [docs] = await Promise.all([
@@ -66,9 +78,23 @@ exports.getOne = (Model, populateOptions) =>
         // 1) Build query
         const query = Model.findById(id);
 
+        // If used populate (Support array or single object)
         if (populateOptions) {
-            query.populate(populateOptions.path, populateOptions.select)
+            if (Array.isArray(populateOptions)) {
+                populateOptions.forEach(opt => {
+                    query = query.populate({
+                        path: opt.path,
+                        select: opt.select
+                    });
+                });
+            } else {
+                query = query.populate({
+                    path: populateOptions.path,
+                    select: populateOptions.select
+                });
+            }
         }
+
         // 2) Excute query
         const doc = await query;
 
@@ -88,9 +114,9 @@ exports.getOne = (Model, populateOptions) =>
 exports.updateOne = (Model) =>
     asyncHandler(async (req, res, next) => {
         const { id } = req.params;
-        
+
         // triggers post('findOneAndDelete')
-        const doc = await Model.findByIdAndUpdate(id, req.body, { 
+        const doc = await Model.findByIdAndUpdate(id, req.body, {
             runValidators: true,
             new: true,
         });

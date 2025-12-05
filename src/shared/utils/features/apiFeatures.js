@@ -97,8 +97,21 @@ class ApiFeatures {
         return this;
     }
 
-    populate(path, select) {
-        this.mongooseQuery = this.mongooseQuery.populate(path, select);
+    populate(populateOptions) {
+  
+        if (!populateOptions) return this;
+
+        // If Array
+        if (Array.isArray(populateOptions)) {
+            populateOptions.forEach(opt => {
+                this.mongooseQuery = this.mongooseQuery.populate(opt);
+            });
+
+            // If Object
+        } else {
+            this.mongooseQuery = this.mongooseQuery.populate(populateOptions);
+        }
+
         return this;
     }
 }
