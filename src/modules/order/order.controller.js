@@ -288,3 +288,114 @@ exports.GetCheckoutSession = asyncHandler(async (req, res, next) => {
         }
     })
 });
+
+
+
+/**
+* @desc Create an order from Stripe session safely, Prevent duplicates and manage stock atomically
+*/
+const createCardOrder = async (session) => {
+    const sessionDb = await mongoose.startSession();
+    sessionDb.startTransaction();
+
+    try {
+        const settings = await PricingSettings.findOne().session(sessionDb);
+        const shippingPrice = settings?.shippingPrice || 0;
+        const taxPercentage = settings?.taxPercentage || 14;
+
+        const cartId = session.client_reference_id;
+        const userId = session.metadata.userId;
+
+        // 1) Check for existing order for this Stripe session
+        const existingOrder = await Order.findOne({ stripeSessionId: session.id }).session(sessionDb);
+        if (existingOrder) return existingOrder;
+
+        // 2) Get cart
+        const cart = await Cart.findById(cartId).session(sessionDb);
+        if (!cart) throw new Error(`No cart found with id: ${cartId} `);
+
+        // 3) Calculate total
+        const cartPrice = cart.isDiscountApplied === false
+            ? cart.totalCartPrice
+            : cart.totalPriceAfterDiscount;
+
+        const taxPrice = (cartPrice * taxPercentage) / 100;
+        const totalOrderPrice = cartPrice + taxPrice + shippingPrice;
+
+        // 4) Create order
+        const order = await Order.create([{
+            user: userId,
+            cartItems: cart.cartItems,
+            shippingAddress: cart.shippingAddress || {},
+            totalOrderPrice,
+            paymentMethodType: "card",
+            isPaid: true,
+            paidAt: Date.now(),
+            stripeSessionId: session.id
+        }], { session: sessionDb });
+
+        // 5) Update stock atomically
+        const bulkOption = cart.cartItems.map(item => ({
+            updateOne: {
+                filter: { _id: item.product },
+                update: { $inc: { quantity: -item.quantity, sold: item.quantity } }
+            }
+        }));
+        const bulkResult = await Product.bulkWrite(bulkOption, { session: sessionDb });
+
+        if (bulkResult.modifiedCount !== cart.cartItems.length) {
+            throw new Error("One of the products is out of stock");
+        }
+
+        // 6) Delete cart
+        await Cart.findByIdAndDelete(cartId).session(sessionDb);
+
+        // 7) Commit transaction
+        await sessionDb.commitTransaction();
+        sessionDb.endSession();
+
+        return order[0];
+
+    } catch (err) {
+        await sessionDb.abortTransaction();
+        sessionDb.endSession();
+        throw err;
+    }
+};
+
+/**
+* @desc Stripe webhook handler, Handles checkout.session.completed, Prevents duplicate orders
+  */
+exports.webhookCheckout = asyncHandler(async (req, res, next) => {
+    const sig = req.headers['stripe-signature'];
+    let event;
+
+    try {
+        event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET_KEY);
+    } catch (err) {
+        console.log(err.message);
+        return res.status(400).send(`Webhook Error: ${err.message}`);
+    }
+
+    if (event.type === 'checkout.session.completed') {
+        const session = event.data.object;
+
+        if (process.env.NODE_ENV === 'development') {
+            console.log("Checkout Session Completed:", session.id);
+            console.log("Cart ID:", session.client_reference_id);
+            console.log("User ID:", session.metadata.userId);
+        }
+
+        try {
+            const order = await createCardOrder(session);
+            if (process.env.NODE_ENV === 'development') {
+                console.log("Order created from Stripe webhook:", order._id);
+            }
+        } catch (err) {
+            console.error("Error creating order from webhook:", err.message);
+        }
+
+    }
+
+    res.status(200).json({ received: true });
+});

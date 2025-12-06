@@ -35,6 +35,14 @@ app.use(cors({
 // Cookie Parser
 app.use(cookieParser());
 
+// webhookCheckout Must be used befor (express.json and express.urlencoded).
+const { webhookCheckout } = require('./modules/order/order.controller.js');
+app.post(
+    '/webhook-checkout',
+    express.raw({ type: 'application/json' }),
+    webhookCheckout
+);
+
 // Body Parsers
 app.use(express.json({ limit: '10kb' }))
 app.use(express.urlencoded({ extended: false }));

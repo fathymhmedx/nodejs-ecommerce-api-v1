@@ -45,8 +45,12 @@ const orderSchema = mongoose.Schema({
         type: Boolean,
         default: false
     },
-    deliveredAt: Date
-
+    deliveredAt: Date,
+    stripeSessionId: {
+        type: String,
+        unique: true,
+        sparse: true 
+    }
 }, {
     timestamps: true,
 });
