@@ -23,7 +23,7 @@ app.disable('x-powered-by');
 
 // Initial security (before any parsing)
 app.use(helmet());
-app.use(hpp());
+app.use(hpp({ whitelist: ['category', 'subCategories', 'brand'] }));
 
 // CORS (before cookies)
 app.use(cors({

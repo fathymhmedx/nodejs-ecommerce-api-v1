@@ -76,7 +76,7 @@ exports.getOne = (Model, populateOptions) =>
     asyncHandler(async (req, res, next) => {
         const { id } = req.params;
         // 1) Build query
-        const query = Model.findById(id);
+        let query = Model.findById(id);
 
         // If used populate (Support array or single object)
         if (populateOptions) {

@@ -5,18 +5,22 @@ class ApiFeatures {
     }
 
     filter() {
-        // 1) Filtering 
         const queryObj = { ...this.queryString };
         const excludedFields = ['page', 'sort', 'limit', 'fields', 'keyword'];
         excludedFields.forEach(el => delete queryObj[el]);
 
-        // 2) Advanced Filtering (Numeric parsing, Regex search)
         let mongoQuery = {};
 
         for (const key in queryObj) {
+            const schemaType = this.mongooseQuery.model.schema.path(key);
+
             // Multi-value filtering
             if (typeof queryObj[key] === 'string' && queryObj[key].includes(',')) {
-                mongoQuery[key] = { $in: queryObj[key].split(',') };
+                if (schemaType.instance === 'ObjectID' || schemaType.instance === 'String') {
+                    mongoQuery[key] = { $in: queryObj[key].split(',') };
+                } else {
+                    mongoQuery[key] = queryObj[key].split(',').map(v => Number(v));
+                }
                 continue;
             }
 
@@ -28,17 +32,22 @@ class ApiFeatures {
                 if (!mongoQuery[field]) mongoQuery[field] = {};
                 mongoQuery[field][`$${operator}`] = value;
             } else {
-                if (typeof value === 'string') {
+                if (schemaType.instance === 'String') {
                     mongoQuery[key] = { $regex: value, $options: 'i' };
+                } else if (schemaType.instance === 'Number') {
+                    mongoQuery[key] = Number(value);
+                } else if (schemaType.instance === 'ObjectID') {
+                    mongoQuery[key] = value; // تأكد أن القيمة ObjectId صحيحة
                 } else {
                     mongoQuery[key] = value;
                 }
             }
         }
-        this.mongooseQuery = this.mongooseQuery.find(mongoQuery);
 
+        this.mongooseQuery = this.mongooseQuery.find(mongoQuery);
         return this;
     }
+
 
     sort() {
         if (this.queryString.sort) {
@@ -98,7 +107,7 @@ class ApiFeatures {
     }
 
     populate(populateOptions) {
-  
+
         if (!populateOptions) return this;
 
         // If Array
