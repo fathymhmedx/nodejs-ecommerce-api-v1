@@ -945,24 +945,21 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{BASE_URL}}/api/v1/products?limit=3",
+							"raw": "{{BASE_URL}}/api/v1/products/?price=22.3&category=68a751dda6142edf693cc0af",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"api",
 								"v1",
-								"products"
+								"products",
+								""
 							],
 							"query": [
 								{
-									"key": "page",
-									"value": "5",
-									"disabled": true
-								},
-								{
 									"key": "limit",
-									"value": "3"
+									"value": "3",
+									"disabled": true
 								},
 								{
 									"key": "keyword",
@@ -980,14 +977,8 @@
 									"disabled": true
 								},
 								{
-									"key": "price[lte]",
-									"value": "50",
-									"disabled": true
-								},
-								{
 									"key": "price",
-									"value": "22.3",
-									"disabled": true
+									"value": "22.3"
 								},
 								{
 									"key": "ratingsAverage[gte]",
@@ -997,6 +988,15 @@
 								{
 									"key": "sort",
 									"value": "-price,sold",
+									"disabled": true
+								},
+								{
+									"key": "category",
+									"value": "68a751dda6142edf693cc0af"
+								},
+								{
+									"key": "page",
+									"value": "3",
 									"disabled": true
 								}
 							]
@@ -1073,6 +1073,87 @@
 								"v1",
 								"products",
 								"687f1e4d5e98a8d378f416b8"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get top ten products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/v1/products/top-ten",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"products",
+								"top-ten"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get top rated products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/v1/products/top-rated",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"products",
+								"top-rated"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get latest products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/v1/products/latest",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"products",
+								"latest"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get related products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/v1/products/688077d450e34a521c33ba2b/related",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"products",
+								"688077d450e34a521c33ba2b",
+								"related"
 							]
 						}
 					},
