@@ -83,10 +83,18 @@ productSchema.virtual('reviews', {
 
 productSchema.plugin(imageUrlPlugin, { folder: 'products', fields: ['imageCover', 'images'] });
 productSchema.plugin(slugifyPlugin, { sourceField: 'title', slugField: 'slug' });
-// // Custom Indexes
-productSchema.index({ category: 1 });          // لو هتعمل فلترة كتير بالـ category
-productSchema.index({ price: 1 });             // لو هتعمل Sorting بالـ price كثير
-productSchema.index({ createdAt: -1 });        // لو هتجيب أحدث المنتجات
+// Custom Indexes
+productSchema.index({ sold: -1 });                // Top selling
+productSchema.index({ price: 1 });                // Sorting + filtering
+productSchema.index({ category: 1 });             // Filtering by category
+productSchema.index({ brand: 1 });                // Filtering by brand
+productSchema.index({ createdAt: -1 });           // New products sort
+productSchema.index({ slug: 1 });                 // slug lookup
+productSchema.index({ title: "text", description: "text" }); // Full-text search
+productSchema.index({ ratingsAverage: -1 });      // Sorting by rating
+
+// Optional powerful compound for real stores
+productSchema.index({ category: 1, price: 1 });   // filter + sort
 
 const Product = mongoose.model('Product', productSchema);
 module.exports = Product;
