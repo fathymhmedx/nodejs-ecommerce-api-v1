@@ -4,6 +4,7 @@ const router = express.Router();
 const { addProductToCart, getLoggedUserCart, removeCartItem, clearCart, updateCartItemQuantity, applyCoupon } = require('./cart.controller');
 const { addProductToCartValidator, updateCartItemQuantityValidator, removeCartItemValidator, applyCouponValidator } = require('./cart.validators');
 const { protect, authorizeRoles } = require('../../shared/middlewares/authMiddleware');
+const {addProductLimiter, applyCouponLimiter, updateCartItemLimiter, clearCartLimiter,removeCartItemLimiter} = require('./cart.rateLimiter');
 
 router.use(protect, authorizeRoles('user'));
 
@@ -13,6 +14,7 @@ router.use(protect, authorizeRoles('user'));
 router
     .route('/')
     .post(
+        addProductLimiter,
         addProductToCartValidator,
         addProductToCart
     )
@@ -23,7 +25,10 @@ router
  */
 router
     .route('/clear')
-    .delete(clearCart)
+    .delete(
+        clearCartLimiter,
+        clearCart
+    )
 
 /**
  * @desc  Apply coupon to cart
@@ -31,6 +36,7 @@ router
 router
     .route('/apply-coupon')
     .put(
+        applyCouponLimiter,
         applyCouponValidator,
         applyCoupon
     )
@@ -40,10 +46,13 @@ router
  */
 router
     .route('/:itemId')
-    .put(updateCartItemQuantityValidator,
+    .put(
+        updateCartItemLimiter,
+        updateCartItemQuantityValidator,
         updateCartItemQuantity
     )
     .delete(
+        removeCartItemLimiter,
         removeCartItemValidator,
         removeCartItem
     )

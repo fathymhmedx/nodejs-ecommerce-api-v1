@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { createCashOrder, getOrders, getLoggedOrders, getLoggedUserOrderById, updateOrderStatusToPaid, updateOrderStatusToDelivered, GetCheckoutSession } = require('./order.controller');
 const { createCashOrderValidator, getLoggedUserOrderByIdValidator, updateOrderStatusToDeliveredValidator, updateOrderStatusToPaidValidator, GetCheckoutSessionValidator } = require('./order.validators');
-
+const { orderLimiter, checkoutLimiter } = require('./order.rateLimiter');
 const { protect, authorizeRoles } = require('../../shared/middlewares/authMiddleware');
 
 router.use(protect);
@@ -11,6 +11,7 @@ router
     .route('/checkout-session/:cartId')
     .get(
         authorizeRoles('user'),
+        checkoutLimiter,
         GetCheckoutSessionValidator,
         GetCheckoutSession
     )
@@ -18,6 +19,7 @@ router
     .route("/:cartId")
     .post(
         authorizeRoles('user'),
+        orderLimiter,
         createCashOrderValidator,
         createCashOrder
     )

@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router({ mergeParams: true });
 const { setProductIdAndUserIdToBody, createFilterObj, createReview, getReviews, getReview, updateReview, deleteReview } = require('./review.controller');
 const { createReviewValidator, getReviewValidator, updateReviewValidator, deleteReviewValidator } = require('./review.validators');
-
+const { createReviewLimiter, updateReviewLimiter, deleteReviewLimiter } = require('./review.rateLimiter');
 
 const { protect, authorizeRoles } = require('../../shared/middlewares/authMiddleware');
 
@@ -16,6 +16,7 @@ router
     .post(
         protect,
         authorizeRoles('user'),
+        createReviewLimiter,
         setProductIdAndUserIdToBody,
         createReviewValidator,
         createReview
@@ -49,6 +50,7 @@ router
     .put(
         protect,
         authorizeRoles('user'),
+        updateReviewLimiter,
         updateReviewValidator,
         updateReview
     )
@@ -60,6 +62,7 @@ router
     .delete(
         protect,
         authorizeRoles('user', 'manager', 'admin'),
+        deleteReviewLimiter,
         deleteReviewValidator,
         deleteReview
     )
