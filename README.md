@@ -55,10 +55,11 @@ npm run start:dev
 npm run start:prod
 ```
 
-**Environment Variables**: `.env` file required (DB, JWT, Stripe, Email, Redis).
+## 🔧 Environment Variables (.env)
 
 The project requires a `.env` file in the root directory with the following variables:
 
+```env
 NODE_ENV=development
 PORT=8000
 
@@ -93,6 +94,8 @@ STRIPE_WEBHOOK_SECRET_KEY=YOUR_STRIPE_WEBHOOK_SECRET
 #Redis settings
 REDIS_URL=YOUR_REDIS_URL
 
+```
+ذذذ
 ---
 
 ## 🔐 JWT Authentication & Role-based Access Control
