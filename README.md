@@ -56,7 +56,6 @@ npm run start:prod
 ```
 
 **Environment Variables**: `.env` file required (DB, JWT, Stripe, Email, Redis).
-## 🔧 Environment Variables (.env)
 
 The project requires a `.env` file in the root directory with the following variables:
 
