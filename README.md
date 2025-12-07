@@ -54,8 +54,7 @@ npm run start:dev
 # Run in production
 npm run start:prod
 ```
-
-**🔧 Environment Variables (.env)**:
+## 🔧 Environment Variables (.env)
 
 The project requires a `.env` file in the root directory with the following variables:
 
@@ -93,7 +92,6 @@ STRIPE_WEBHOOK_SECRET_KEY=YOUR_STRIPE_WEBHOOK_SECRET
 
 #Redis settings
 REDIS_URL=YOUR_REDIS_URL
-
 
 ---
 
