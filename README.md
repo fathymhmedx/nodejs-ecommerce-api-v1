@@ -55,7 +55,45 @@ npm run start:dev
 npm run start:prod
 ```
 
-**Environment Variables**: `.env` file required (DB, JWT, Stripe, Email, Redis).
+**🔧 Environment Variables (.env)**:
+
+The project requires a `.env` file in the root directory with the following variables:
+
+```env
+NODE_ENV=development
+PORT=8000
+
+#Database
+DB_URI=mongodb+srv://Fathymohamed11:<db_password>@cluster0.q1fuprp.mongodb.net/Ecommerce?retryWrites=true&w=majority&appName=Cluster0
+DB_PASS=YOUR_DB_PASSWORD
+
+# Allow all origins (only for development)
+CLIENT_URL=*
+
+#BaseURLImage
+BASE_URL=http://localhost:8000
+
+#JWT
+JWT_SECRET_KEY=YOUR_JWT_SECRET_KEY
+JWT_EXPIRES_IN=15m
+JWT_REFRESH_SECRET_KEY=YOUR_JWT_REFRESH_SECRET_KEY
+JWT_REFRESH_EXPIRES_IN=7d
+
+#Email Settings
+EMAIL_HOST=smtp.ethereal.email
+EMAIL_PORT=587
+EMAIL_USER=YOUR_EMAIL_USER
+EMAIL_PASSWORD=YOUR_EMAIL_PASSWORD
+EMAIL_FROM_NAME=E-shop
+EMAIL_FROM=fathymohamed11@gmail.com
+
+#Stripe Settings
+STRIPE_SECRET_KEY=YOUR_STRIPE_SECRET
+STRIPE_WEBHOOK_SECRET_KEY=YOUR_STRIPE_WEBHOOK_SECRET
+
+#Redis settings
+REDIS_URL=YOUR_REDIS_URL
+
 
 ---
 
