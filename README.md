@@ -93,7 +93,7 @@ STRIPE_WEBHOOK_SECRET_KEY=YOUR_STRIPE_WEBHOOK_SECRET
 #Redis settings
 REDIS_URL=YOUR_REDIS_URL
 
----
+
 
 ## 🔐 JWT Authentication & Role-based Access Control
 
