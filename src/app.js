@@ -29,6 +29,8 @@ app.use(hpp({ whitelist: ['category', 'subCategories', 'brand'] }));
 app.use(cors({
     // Allow all origins (change to specific domain in production, like: origin: process.env.CLIENT_URL)
     origin: process.env.CLIENT_URL,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true, // Important because cookies are sent via CORS
 }));
 
@@ -44,7 +46,7 @@ app.post(
 );
 
 // Body Parsers
-app.use(express.json({ limit: '10kb' }))
+app.use(express.json({ limit: '50kb' }))
 app.use(express.urlencoded({ extended: false }));
 
 // Compression
